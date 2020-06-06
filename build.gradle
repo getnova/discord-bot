@@ -1,0 +1,79 @@
+plugins {
+    id 'java'
+    id 'io.freefair.git-version' version '5.1.0'
+    id 'io.freefair.lombok' version '5.1.0'
+    id 'io.freefair.javadoc-utf-8' version '5.1.0'
+    id 'io.freefair.javadoc-links' version '5.1.0'
+    id 'checkstyle'
+}
+
+group 'net.getnova.backend'
+version version.toString().startsWith('v') ? version.toString().substring(1) : version
+
+sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_14
+
+repositories {
+    mavenCentral()
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:4.1.1_159'
+    implementation 'net.getnova.backend:nova-logging:master-SNAPSHOT'
+    implementation 'net.getnova.backend:nova-service:master-SNAPSHOT'
+    implementation 'net.getnova.backend:nova-injection:master-SNAPSHOT'
+    implementation 'net.getnova.backend:nova-config:master-SNAPSHOT'
+    runtimeOnly 'net.getnova.backend:nova-bootstrap:master-SNAPSHOT'
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : project.name,
+                "Specification-Vendor"    : "Nova Project (https://github.com/getnova)",
+                "Specification-Version"   : project.version,
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.version,
+                "Implementation-Vendor"   : "Nova Project (https://github.com/getnova)",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+
+lombok {
+    config.put('lombok.equalsandhashcode.callsuper', 'CALL')
+}
+
+def checkstyleDir = "${rootDir}/config/checkstyle"
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+checkstyleMain {
+    configFile = file("${checkstyleDir}/main.xml")
+}
+
+checkstyleTest {
+    configFile = file("${checkstyleDir}/test.xml")
+}
+
+task copyJavaDocStyles(type: Copy) {
+    from "$rootDir/gradle/javadoc.css"
+    rename "javadoc.css", "stylesheet.css"
+    into "$buildDir/docs/aggregateJavadoc/"
+}
+
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+    finalizedBy copyJavaDocStyles
+}
+
