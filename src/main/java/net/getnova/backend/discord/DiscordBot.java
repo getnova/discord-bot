@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.getnova.backend.config.ConfigService;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.InitService;
+import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
 import net.getnova.backend.service.event.StopService;
 import net.getnova.backend.service.event.StopServiceEvent;
@@ -27,7 +28,7 @@ public class DiscordBot {
         this.config = configService.addConfig("discordBot", new DiscordBotConfig());
     }
 
-    @InitService
+    @PreInitService
     public void preInit(final PreInitServiceEvent event) throws LoginException {
         this.jda = JDABuilder.create(this.config.getToken(), GatewayIntent.GUILD_MESSAGES)
                 .setAutoReconnect(true)
