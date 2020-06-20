@@ -11,7 +11,7 @@ import net.getnova.backend.discord.command.CommandCategory;
 import javax.inject.Inject;
 import java.time.Duration;
 
-public class SkipCommand extends Command {
+public final class SkipCommand extends Command {
 
     @Inject
     private AudioService audioService;
@@ -27,7 +27,10 @@ public class SkipCommand extends Command {
             message.getChannel().sendMessage(Utils.createInfoEmbed("The current playlist is finished.")).queue();
         } else {
             final AudioTrackInfo info = track.getInfo();
-            message.getChannel().sendMessage(Utils.createInfoEmbed("Current track skipped. Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue();
+            message.getChannel().sendMessage(
+                    Utils.createInfoEmbed("Current track skipped. Now playing **" + info.title + "** from **" + info.author
+                            + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
+                    )).queue();
         }
     }
 }

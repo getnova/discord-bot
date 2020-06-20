@@ -21,7 +21,7 @@ import java.util.List;
 
 @Service(value = "discordCommand", depends = {DiscordBot.class, EventService.class})
 @Singleton
-public class CommandService {
+public final class CommandService {
 
     @Getter
     private final List<Command> commands;

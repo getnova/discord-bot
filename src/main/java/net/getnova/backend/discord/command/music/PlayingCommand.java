@@ -9,7 +9,7 @@ import net.getnova.backend.discord.command.CommandCategory;
 
 import javax.inject.Inject;
 
-public class PlayingCommand extends Command {
+public final class PlayingCommand extends Command {
 
     @Inject
     private AudioService audioService;

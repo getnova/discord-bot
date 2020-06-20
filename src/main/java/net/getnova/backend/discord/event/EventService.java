@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Service(value = "discordEvent", depends = DiscordBot.class)
 @Singleton
-public class EventService {
+public final class EventService {
 
     private final Set<Class<? extends ListenerAdapter>> listeners;
     @Inject

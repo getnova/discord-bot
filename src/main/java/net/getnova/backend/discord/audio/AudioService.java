@@ -28,9 +28,9 @@ import java.util.Map;
 @Service(value = "discordAudio", depends = {DiscordBot.class, EventService.class})
 @Singleton
 @Slf4j
-public class AudioService {
+public final class AudioService {
 
-    private final Map<String, Playlist> playlists;
+    private final Map<Long, Playlist> playlists;
     private final AudioPlayerManager playerManager;
 
     @Inject
@@ -51,11 +51,11 @@ public class AudioService {
     }
 
     public Playlist getPlaylist(final Guild guild) {
-        Playlist playlist = this.playlists.get(guild.getId());
+        Playlist playlist = this.playlists.get(guild.getIdLong());
 
         if (playlist == null) {
             playlist = new Playlist(this.playerManager);
-            this.playlists.put(guild.getId(), playlist);
+            this.playlists.put(guild.getIdLong(), playlist);
         }
 
         guild.getAudioManager().setSendingHandler(playlist.getSendHandler());
@@ -74,7 +74,9 @@ public class AudioService {
                 playlist.add(track);
                 playlist.play();
                 final AudioTrackInfo info = playlist.getCurrent().getInfo();
-                textChannel.sendMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue();
+                textChannel.sendMessage(Utils.createInfoEmbed(
+                        "Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
+                )).queue();
             }
 
             @Override
@@ -82,7 +84,10 @@ public class AudioService {
                 playlist.addAll(audioPlaylist.getTracks());
                 playlist.play();
                 final AudioTrackInfo info = playlist.getCurrent().getInfo();
-                textChannel.sendMessage(Utils.createInfoEmbed("Playlist with " + audioPlaylist.getTracks().size() + " items loaded. Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue();
+                textChannel.sendMessage(Utils.createInfoEmbed(
+                        "Playlist with " + audioPlaylist.getTracks().size() + " items loaded. Now playing **" + info.title
+                                + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
+                )).queue();
             }
 
             @Override
@@ -92,7 +97,9 @@ public class AudioService {
 
             @Override
             public void loadFailed(final FriendlyException exception) {
-                textChannel.sendMessage(Utils.createErrorEmbed("Could not play `" + url + "`. Please report this error to a bot administrator so that this error can be corrected.")).queue();
+                textChannel.sendMessage(Utils.createErrorEmbed(
+                        "Could not play `" + url + "`. Please report this error to a bot administrator so that this error can be corrected."
+                )).queue();
                 log.error("Unable to play " + url + ".", exception);
             }
         });

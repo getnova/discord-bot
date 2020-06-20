@@ -5,7 +5,7 @@ import net.getnova.backend.discord.Utils;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
 
-public class PingCommand extends Command {
+public final class PingCommand extends Command {
 
     public PingCommand() {
         super("ping", CommandCategory.GENERAL, "Ping ... Pong!");

@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.util.Arrays;
 
-public class CommandEvent extends ListenerAdapter {
+public final class CommandEvent extends ListenerAdapter {
 
     @Inject
     private CommandService commandService;

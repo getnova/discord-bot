@@ -28,7 +28,7 @@ public class DiscordBot {
     }
 
     @PreInitService
-    public void preInit(final PreInitServiceEvent event) throws LoginException {
+    private void preInit(final PreInitServiceEvent event) throws LoginException {
         this.jda = JDABuilder.create(this.config.getToken(), GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_VOICE_STATES)
                 .setAutoReconnect(true)
                 .setActivity(Activity.watching("people!"))
@@ -41,7 +41,7 @@ public class DiscordBot {
     }
 
     @StopService
-    public void stop(final StopServiceEvent event) {
+    private void stop(final StopServiceEvent event) {
         this.jda.shutdown();
     }
 }

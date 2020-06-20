@@ -10,7 +10,7 @@ import net.getnova.backend.discord.command.CommandService;
 import javax.inject.Inject;
 import java.util.stream.Collectors;
 
-public class HelpCommand extends Command {
+public final class HelpCommand extends Command {
 
     @Inject
     private CommandService commandService;

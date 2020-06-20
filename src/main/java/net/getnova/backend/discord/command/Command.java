@@ -18,5 +18,5 @@ public abstract class Command {
         this.description = description;
     }
 
-    public abstract void execute(final Message message, final String[] args);
+    public abstract void execute(Message message, String[] args);
 }

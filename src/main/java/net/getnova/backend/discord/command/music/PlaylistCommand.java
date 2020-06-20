@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.util.List;
 
-public class PlaylistCommand extends Command {
+public final class PlaylistCommand extends Command {
 
     @Inject
     private AudioService audioService;

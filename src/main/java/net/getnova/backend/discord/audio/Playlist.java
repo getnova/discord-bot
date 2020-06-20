@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Playlist extends AudioEventAdapter {
+public final class Playlist extends AudioEventAdapter {
 
     @Getter
     private final AudioPlayer player;
@@ -78,9 +78,11 @@ public class Playlist extends AudioEventAdapter {
             } else {
                 final AudioTrackInfo info = audioTrack.getInfo();
                 if (message == null) {
-                    this.channel.sendMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue(m -> this.message = m);
+                    this.channel.sendMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author
+                            + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue(m -> this.message = m);
                 } else {
-                    this.message.editMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue();
+                    this.message.editMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author
+                            + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue();
                 }
             }
         }
