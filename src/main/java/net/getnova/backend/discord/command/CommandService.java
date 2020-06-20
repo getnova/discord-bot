@@ -8,9 +8,9 @@ import net.getnova.backend.discord.command.music.PlayCommand;
 import net.getnova.backend.discord.command.music.PlaylistCommand;
 import net.getnova.backend.discord.command.music.SkipCommand;
 import net.getnova.backend.discord.command.music.StopCommand;
+import net.getnova.backend.discord.event.EventService;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
-import net.getnova.backend.service.ServiceHandler;
 import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
 
@@ -19,7 +19,7 @@ import javax.inject.Singleton;
 import java.util.LinkedList;
 import java.util.List;
 
-@Service(value = "discordCommand", depends = DiscordBot.class)
+@Service(value = "discordCommand", depends = {DiscordBot.class, EventService.class})
 @Singleton
 public class CommandService {
 
@@ -27,10 +27,9 @@ public class CommandService {
     private final List<Command> commands;
 
     @Inject
-    private ServiceHandler serviceHandler;
-
-    @Inject
     private InjectionHandler injectionHandler;
+    @Inject
+    private EventService eventService;
 
     public CommandService() {
         this.commands = new LinkedList<>();
@@ -38,10 +37,7 @@ public class CommandService {
 
     @PreInitService
     private void preInit(final PreInitServiceEvent event) {
-        final CommandEvent commandEvent = new CommandEvent();
-        this.injectionHandler.getInjector().injectMembers(commandEvent);
-        this.serviceHandler.getService(DiscordBot.class).getJda().addEventListener(commandEvent);
-
+        this.eventService.addListener(CommandEvent.class);
         this.addCommand(new HelpCommand());
         this.addCommand(new PingCommand());
         this.addCommand(new PlayCommand());

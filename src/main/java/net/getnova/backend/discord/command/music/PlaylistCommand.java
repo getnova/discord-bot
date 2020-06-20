@@ -37,7 +37,7 @@ public class PlaylistCommand extends Command {
 
             int i = 0;
             for (final AudioTrack track : queue) {
-                if (i >= 5) continue;
+                if (i >= 10) continue;
                 final AudioTrackInfo info = track.getInfo();
                 embedBuilder.addField(info.author, "**" + info.title + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")", false);
                 i++;

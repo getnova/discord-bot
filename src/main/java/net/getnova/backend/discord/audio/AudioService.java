@@ -14,20 +14,18 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.Utils;
-import net.getnova.backend.injection.InjectionHandler;
+import net.getnova.backend.discord.event.EventService;
 import net.getnova.backend.service.Service;
-import net.getnova.backend.service.ServiceHandler;
 import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service(value = "discordAudio", depends = DiscordBot.class)
+@Service(value = "discordAudio", depends = {DiscordBot.class, EventService.class})
 @Singleton
 @Slf4j
 public class AudioService {
@@ -36,11 +34,10 @@ public class AudioService {
     private final AudioPlayerManager playerManager;
 
     @Inject
-    private ServiceHandler serviceHandler;
-    @Inject
-    private InjectionHandler injectionHandler;
+    private EventService eventService;
 
-    public AudioService() {
+    @Inject
+    public AudioService(final EventService eventService) {
         this.playlists = new HashMap<>();
         this.playerManager = new DefaultAudioPlayerManager();
 
@@ -50,9 +47,7 @@ public class AudioService {
 
     @PreInitService
     private void preInit(final PreInitServiceEvent event) {
-        final AudioEvent audioEvent = new AudioEvent();
-        this.injectionHandler.getInjector().injectMembers(audioEvent);
-        this.serviceHandler.getService(DiscordBot.class).getJda().addEventListener(audioEvent);
+        this.eventService.addListener(AudioEvent.class);
     }
 
     public Playlist getPlaylist(final Guild guild) {
