@@ -1,4 +1,4 @@
-package net.getnova.backend.discord.command.music;
+package net.getnova.backend.discord.feature.music.commands;
 
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Message;

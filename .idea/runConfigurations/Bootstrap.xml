@@ -2,7 +2,7 @@
   <configuration default="false" name="Bootstrap" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="net.getnova.backend.Bootstrap" />
     <module name="discord-bot.main" />
-    <option name="PROGRAM_PARAMETERS" value="-s net.getnova.backend.discord.DiscordBot -s net.getnova.backend.discord.music.MusicService" />
+    <option name="PROGRAM_PARAMETERS" value="-s net.getnova.backend.discord.DiscordBot -s net.getnova.backend.discord.feature.music.MusicService" />
     <option name="VM_PARAMETERS" value="-XX:+ShowCodeDetailsInExceptionMessages" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run" />
     <method v="2">

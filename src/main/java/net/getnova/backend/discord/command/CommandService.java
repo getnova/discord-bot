@@ -4,10 +4,10 @@ import lombok.Getter;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.command.general.HelpCommand;
 import net.getnova.backend.discord.command.general.PingCommand;
-import net.getnova.backend.discord.command.music.PlayCommand;
-import net.getnova.backend.discord.command.music.PlaylistCommand;
-import net.getnova.backend.discord.command.music.SkipCommand;
-import net.getnova.backend.discord.command.music.StopCommand;
+import net.getnova.backend.discord.feature.music.commands.PlayCommand;
+import net.getnova.backend.discord.feature.music.commands.PlaylistCommand;
+import net.getnova.backend.discord.feature.music.commands.SkipCommand;
+import net.getnova.backend.discord.feature.music.commands.StopCommand;
 import net.getnova.backend.discord.event.EventService;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
@@ -40,10 +40,6 @@ public final class CommandService {
         this.eventService.addListener(CommandEvent.class);
         this.addCommand(new HelpCommand());
         this.addCommand(new PingCommand());
-        this.addCommand(new PlayCommand());
-        this.addCommand(new StopCommand());
-        this.addCommand(new SkipCommand());
-        this.addCommand(new PlaylistCommand());
     }
 
     Command getCommand(final String name) {
@@ -53,7 +49,7 @@ public final class CommandService {
         return null;
     }
 
-    private <T extends Command> T addCommand(final T command) {
+    public <T extends Command> T addCommand(final T command) {
         this.injectionHandler.getInjector().injectMembers(command);
         this.commands.add(command);
         return command;

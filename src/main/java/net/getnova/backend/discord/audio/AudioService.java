@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.Utils;
 import net.getnova.backend.discord.event.EventService;
+import net.getnova.backend.discord.feature.music.MusicService;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
@@ -35,6 +36,8 @@ public final class AudioService {
 
     @Inject
     private EventService eventService;
+    @Inject
+    private MusicService musicService;
 
     @Inject
     public AudioService(final EventService eventService) {
@@ -77,6 +80,7 @@ public final class AudioService {
                 textChannel.sendMessage(Utils.createInfoEmbed(
                         "Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
                 )).queue();
+                musicService.updateDashboard();
             }
 
             @Override
@@ -88,6 +92,7 @@ public final class AudioService {
                         "Playlist with " + audioPlaylist.getTracks().size() + " items loaded. Now playing **" + info.title
                                 + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
                 )).queue();
+                musicService.updateDashboard();
             }
 
             @Override

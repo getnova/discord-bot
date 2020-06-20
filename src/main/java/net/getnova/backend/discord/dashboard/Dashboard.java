@@ -2,6 +2,7 @@ package net.getnova.backend.discord.dashboard;
 
 import lombok.Data;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -22,9 +23,10 @@ public abstract class Dashboard {
     public final void update() {
         /* Clear all old messages. Which is not the current in "this.message". */
         final List<Message> retrievedHistory = this.channel.getHistory().retrievePast(10).complete();
+        final boolean messagePresent = this.message != null;
         if (!retrievedHistory.isEmpty()) retrievedHistory.forEach(message -> {
-            if (this.message == null && message.getAuthor().equals(this.jda.getSelfUser())) this.message = message;
-            else if (this.message == null || !this.message.equals(message)) message.delete().queue();
+            if (!messagePresent && message.getAuthor().equals(this.jda.getSelfUser())) this.message = message;
+            else if (messagePresent && !this.message.equals(message)) message.delete().queue();
         });
 
         /* Create/update the old message. */
@@ -32,9 +34,13 @@ public abstract class Dashboard {
         else {
             final List<MessageEmbed> embeds = this.message.getEmbeds();
             final MessageEmbed embed = this.generate();
-            if (embeds.size() == 1 && embeds.get(0).equals(embed)) this.message.editMessage(embed).queue();
+            if (!(embeds.size() == 1 && embeds.get(0).equals(embed))) this.message.editMessage(embed).queue();
         }
     }
 
     protected abstract MessageEmbed generate();
+
+    public Guild getGuild() {
+        return this.channel.getGuild();
+    }
 }
