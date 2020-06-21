@@ -6,7 +6,7 @@
         <img alt="Releases" src="https://img.shields.io/github/v/tag/getnova/discord-bot?label=latest%20version&style=flat-square">
     </a>
     <a style="text-decoration:none" href="https://github.com/getnova/discord-bot/actions">
-        <img alt="Docker Image Build" src="https://img.shields.io/github/workflow/status/getnova/discord-bot/Build?label=Build&style=flat-square">
+        <img alt="build" src="https://img.shields.io/github/workflow/status/getnova/discord-bot/Build?label=build&style=flat-square">
     </a>
 </p>
 <p align="center">
