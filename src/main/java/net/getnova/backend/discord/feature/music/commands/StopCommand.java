@@ -26,6 +26,5 @@ public final class StopCommand extends Command {
             return;
         }
         this.musicService.getPlaylist(message.getGuild()).stop();
-        message.getChannel().sendMessage(Utils.createInfoEmbed("Stopped current playback.")).queue();
     }
 }
