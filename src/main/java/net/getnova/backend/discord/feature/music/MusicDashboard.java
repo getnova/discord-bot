@@ -42,7 +42,7 @@ public final class MusicDashboard extends Dashboard {
         final int size = Math.min(queue.size(), 10);
         for (int i = 0; i < size; i++) {
             final AudioTrackInfo info = queue.get(i).getInfo();
-            embedBuilder.addField(info.author, "**" + info.title + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")", false);
+            embedBuilder.addField(info.author, "**[" + info.title + "](" + info.uri + ")** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")", false);
         }
         return embedBuilder.build();
     }
