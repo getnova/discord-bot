@@ -22,11 +22,10 @@ public abstract class Dashboard {
 
     public final void update() {
         /* Clear all old messages. Which is not the current in "this.message". */
-        final List<Message> retrievedHistory = this.channel.getHistory().retrievePast(10).complete();
         final boolean messagePresent = this.message != null;
-        if (!retrievedHistory.isEmpty()) retrievedHistory.forEach(message -> {
+        this.channel.getHistory().retrievePast(10).complete().forEach(message -> {
             if (!messagePresent && message.getAuthor().equals(this.jda.getSelfUser())) this.message = message;
-            else if (messagePresent && !this.message.equals(message)) message.delete().queue();
+            else if (!messagePresent || !this.message.equals(message)) message.delete().queue();
         });
 
         /* Create/update the old message. */

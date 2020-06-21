@@ -80,7 +80,7 @@ public final class AudioService {
                 textChannel.sendMessage(Utils.createInfoEmbed(
                         "Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
                 )).queue();
-                musicService.updateDashboard();
+                musicService.updateDashboard(voiceChannel.getGuild());
             }
 
             @Override
@@ -92,7 +92,7 @@ public final class AudioService {
                         "Playlist with " + audioPlaylist.getTracks().size() + " items loaded. Now playing **" + info.title
                                 + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
                 )).queue();
-                musicService.updateDashboard();
+                musicService.updateDashboard(voiceChannel.getGuild());
             }
 
             @Override

@@ -1,5 +1,6 @@
 package net.getnova.backend.discord.dashboard;
 
+import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
@@ -12,7 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Service(value = "discordDashboard", depends = DiscordBot.class)
-@Singleton
+@Singleton@Slf4j
 public final class DashboardService {
 
     private final Set<Dashboard> dashboards;

@@ -35,7 +35,7 @@ public final class SkipCommand extends Command {
                             + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
                     )).queue();
 
-            musicService.updateDashboard();
+            musicService.updateDashboard(message.getGuild());
         }
     }
 }
