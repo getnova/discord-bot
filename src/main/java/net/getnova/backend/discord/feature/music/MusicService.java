@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Service(value = "discordMusic", depends = {DiscordBot.class, CommandService.class, EventService.class, DashboardService.class, AudioService.class})
 @Singleton
-public class MusicService {
+public final class MusicService {
 
     private final Map<Long, Playlist> playlists;
 

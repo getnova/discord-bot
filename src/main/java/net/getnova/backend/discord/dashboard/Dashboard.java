@@ -2,6 +2,7 @@ package net.getnova.backend.discord.dashboard;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -22,7 +23,8 @@ public abstract class Dashboard {
     private Message message;
 
     @Inject
-    protected JDA jda;
+    @Getter(AccessLevel.PROTECTED)
+    private JDA jda;
 
     public final void update() {
         /* Clear all old messages. Which is not the current in "this.message". */
@@ -46,6 +48,11 @@ public abstract class Dashboard {
         }
     }
 
+    /**
+     * Generated a new {@link MessageEmbed} witch should be displayed as the dashboard.
+     *
+     * @return the {@link MessageEmbed}
+     */
     protected abstract MessageEmbed generate();
 
     public Guild getGuild() {

@@ -10,7 +10,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.getnova.backend.discord.Utils;
@@ -33,8 +32,6 @@ public final class Playlist extends AudioEventAdapter {
     @Getter
     private final List<AudioTrack> queue;
 
-    private Message message;
-
     public Playlist(final Dashboard dashboard, final AudioPlayerManager playerManager) {
         this.playerManager = playerManager;
         this.player = playerManager.createPlayer();
@@ -54,7 +51,10 @@ public final class Playlist extends AudioEventAdapter {
 
     private void play() {
         final AudioTrack track = this.getCurrent();
-        if (track != null && !this.player.startTrack(track, true)) this.queue.remove(0);
+        if (track != null && !this.player.startTrack(track, true)) {
+            this.queue.remove(0);
+            this.dashboard.update();
+        }
     }
 
     public AudioTrack skip() {
@@ -62,6 +62,7 @@ public final class Playlist extends AudioEventAdapter {
             this.queue.remove(0);
             this.player.stopTrack();
             this.play();
+            this.dashboard.update();
             return this.getCurrent();
         }
         return null;
@@ -71,6 +72,7 @@ public final class Playlist extends AudioEventAdapter {
         AudioUtils.stop(this.channel.getGuild());
         this.player.stopTrack();
         this.queue.clear();
+        this.dashboard.update();
     }
 
     @Override

@@ -33,12 +33,14 @@ public final class CommandEvent extends ListenerAdapter {
             if (dashboardType != null) {
                 final Dashboard dashboard = this.dashboardService.getDashboard(event.getGuild(), dashboardType);
                 if (dashboard == null) {
-                    Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `" + input[0] + "` is not configures for this server, create a text channel with the name of this module.")));
+                    Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `"
+                            + input[0] + "` is not configures for this server, create a text channel with the name of this module.")));
                     return;
                 }
 
                 if (!dashboard.getChannel().equals(event.getChannel())) {
-                    Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `" + input[0] + "`is not for this channel, try it in #" + dashboard.getId() + ".")));
+                    Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `"
+                            + input[0] + "`is not for this channel, try it in #" + dashboard.getId() + ".")));
                     return;
                 }
             }

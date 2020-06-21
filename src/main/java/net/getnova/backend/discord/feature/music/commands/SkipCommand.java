@@ -22,8 +22,7 @@ public final class SkipCommand extends Command {
     @Override
     public void execute(final Message message, final String[] args) {
         final AudioTrack track = this.musicService.getPlaylist(message.getGuild()).skip();
-        if (track == null) {
+        if (track == null)
             Utils.temporallyMessage(message.getChannel().sendMessage(Utils.createInfoEmbed("The current playlist is finished.")));
-        } else this.musicService.updateDashboard(message.getGuild());
     }
 }
