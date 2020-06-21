@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.getnova.backend.Nova;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
@@ -28,6 +29,8 @@ public final class DashboardService {
     private final Set<Dashboard> dashboards;
 
     @Inject
+    private Nova nova;
+    @Inject
     private InjectionHandler injectionHandler;
 
     public DashboardService() {
@@ -44,7 +47,7 @@ public final class DashboardService {
 
             for (final Class<? extends Dashboard> dashboardType : this.dashboardTypes) {
                 final Dashboard dashboard = this.injectionHandler.getInjector().getInstance(dashboardType);
-                channels = guild.getTextChannelsByName(dashboard.getId(), false);
+                channels = guild.getTextChannelsByName(this.nova.isDebug() ? dashboard.getId() + "-debug" : dashboard.getId(), false);
                 if (!channels.isEmpty()) {
                     dashboard.setChannel(channels.get(0));
                     this.dashboards.add(dashboard);
