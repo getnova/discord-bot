@@ -55,7 +55,7 @@ public abstract class Dashboard {
      */
     protected abstract MessageEmbed generate();
 
-    public Guild getGuild() {
+    public final Guild getGuild() {
         return this.channel.getGuild();
     }
 }
