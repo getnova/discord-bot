@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public abstract class Dashboard {
@@ -25,11 +26,16 @@ public abstract class Dashboard {
 
     public final void update() {
         /* Clear all old messages. Which is not the current in "this.message". */
-        this.channel.getHistory().retrievePast(50).complete().forEach(message -> {
+        final List<Message> messagesToDelete = this.channel.getHistory().retrievePast(50).complete().stream().filter(message -> {
             final boolean messagePresent = this.message != null;
-            if (!messagePresent && message.getAuthor().equals(this.jda.getSelfUser())) this.message = message;
-            else if (!messagePresent || !this.message.equals(message)) message.delete().queue();
-        });
+            if (!messagePresent && message.getAuthor().equals(this.jda.getSelfUser())) {
+                this.message = message;
+                return false;
+            }
+            return !messagePresent || !this.message.equals(message);
+        }).collect(Collectors.toUnmodifiableList());
+        if (messagesToDelete.size() == 1) messagesToDelete.get(0).delete().queue();
+        else if (!messagesToDelete.isEmpty()) this.channel.deleteMessages(messagesToDelete).queue();
 
         /* Create/update the old message. */
         if (this.message == null) this.channel.sendMessage(this.generate()).queue(message -> this.message = message);

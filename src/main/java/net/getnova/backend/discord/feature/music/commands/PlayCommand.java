@@ -3,17 +3,17 @@ package net.getnova.backend.discord.feature.music.commands;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Message;
 import net.getnova.backend.discord.Utils;
-import net.getnova.backend.discord.audio.AudioService;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
 import net.getnova.backend.discord.feature.music.MusicDashboard;
+import net.getnova.backend.discord.feature.music.MusicService;
 
 import javax.inject.Inject;
 
 public final class PlayCommand extends Command {
 
     @Inject
-    private AudioService audioService;
+    private MusicService musicService;
 
     public PlayCommand() {
         super("play", CommandCategory.MUSIC, MusicDashboard.class, "Plays music from the given url.");
@@ -32,6 +32,6 @@ public final class PlayCommand extends Command {
             return;
         }
 
-        this.audioService.play(message.getChannel(), voiceState.getChannel(), args[0]);
+        this.musicService.getPlaylist(message.getGuild()).play(voiceState.getChannel(), args[0]);
     }
 }

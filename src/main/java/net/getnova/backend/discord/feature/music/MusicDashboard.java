@@ -5,7 +5,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.getnova.backend.discord.Utils;
-import net.getnova.backend.discord.audio.AudioService;
 import net.getnova.backend.discord.dashboard.Dashboard;
 
 import javax.inject.Inject;
@@ -15,7 +14,7 @@ import java.util.List;
 public final class MusicDashboard extends Dashboard {
 
     @Inject
-    private AudioService audioService;
+    private MusicService musicService;
 
     public MusicDashboard() {
         super("music");
@@ -23,7 +22,7 @@ public final class MusicDashboard extends Dashboard {
 
     @Override
     public MessageEmbed generate() {
-        final List<AudioTrack> queue = this.audioService.getPlaylist(this.getGuild()).getQueue();
+        final List<AudioTrack> queue = this.musicService.getPlaylist(this.getGuild()).getQueue();
         return queue.isEmpty() ? this.nothingPlaying() : playlist(queue);
     }
 
