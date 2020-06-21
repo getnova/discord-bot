@@ -30,7 +30,7 @@ dependencies {
     implementation 'net.getnova.backend:nova-service:+'
     implementation 'net.getnova.backend:nova-injection:+'
     implementation 'net.getnova.backend:nova-config:+'
-    runtimeOnly 'net.getnova.backend:nova-bootstrap:+'
+    implementation 'net.getnova.backend:nova-bootstrap:+'
 }
 
 jar {
