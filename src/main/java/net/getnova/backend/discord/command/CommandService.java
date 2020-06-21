@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 import java.util.LinkedList;
 import java.util.List;
 
-@Service(value = "discordCommand", depends = {DiscordBot.class, DashboardService.class, EventService.class})
+@Service(value = "discord-command", depends = {DiscordBot.class, DashboardService.class, EventService.class})
 @Singleton
 public final class CommandService {
 

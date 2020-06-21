@@ -57,15 +57,14 @@ public final class Playlist extends AudioEventAdapter {
         }
     }
 
-    public AudioTrack skip() {
-        if (!this.queue.isEmpty()) {
-            this.queue.remove(0);
+    public AudioTrack skip(final int count) {
+        if (!this.queue.isEmpty() && count > 0) {
+            this.queue.subList(0, count).clear();
             this.player.stopTrack();
             this.play();
             this.dashboard.update();
-            return this.getCurrent();
         }
-        return null;
+        return this.getCurrent();
     }
 
     public void stop() {
@@ -78,7 +77,7 @@ public final class Playlist extends AudioEventAdapter {
     @Override
     public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
         if (endReason.equals(AudioTrackEndReason.FINISHED) || endReason.equals(AudioTrackEndReason.LOAD_FAILED))
-            this.skip();
+            this.skip(1);
         if (endReason.equals(AudioTrackEndReason.LOAD_FAILED))
             Utils.temporallyMessage(this.channel.sendMessage(Utils.createErrorEmbed("Error while loading song.")));
     }

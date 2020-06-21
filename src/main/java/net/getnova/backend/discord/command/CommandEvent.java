@@ -3,6 +3,7 @@ package net.getnova.backend.discord.command;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.getnova.backend.Nova;
+import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.Utils;
 import net.getnova.backend.discord.dashboard.Dashboard;
 import net.getnova.backend.discord.dashboard.DashboardService;
@@ -13,17 +14,17 @@ import java.util.Arrays;
 public final class CommandEvent extends ListenerAdapter {
 
     @Inject
-    private Nova nova;
-    @Inject
     private CommandService commandService;
     @Inject
     private DashboardService dashboardService;
+    @Inject
+    private DiscordBot discordBot;
 
     @Override
     public void onGuildMessageReceived(final GuildMessageReceivedEvent event) {
         final String message = event.getMessage().getContentRaw();
 
-        if (message.startsWith(this.nova.isDebug() ? "?" : "!") && !(event.getAuthor().isBot() || event.getAuthor().isFake())) {
+        if (message.startsWith(this.discordBot.getConfig().getPrefix()) && !(event.getAuthor().isBot() || event.getAuthor().isFake())) {
             final String[] input = Arrays.stream(message.substring(1).split("[ \t\n\r\f]")).filter(s -> !s.isEmpty()).toArray(String[]::new);
             final Command command = this.commandService.getCommand(input[0]);
 

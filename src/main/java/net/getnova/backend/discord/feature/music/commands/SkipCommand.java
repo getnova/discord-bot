@@ -16,13 +16,17 @@ public final class SkipCommand extends Command {
     private MusicService musicService;
 
     public SkipCommand() {
-        super("skip", CommandCategory.MUSIC, MusicDashboard.class, "Skip the current track.");
+        super("skip", CommandCategory.MUSIC, MusicDashboard.class, "Skip the current track or provide a number to specify how many tracks should be skipped.");
     }
 
     @Override
     public void execute(final Message message, final String[] args) {
-        final AudioTrack track = this.musicService.getPlaylist(message.getGuild()).skip();
-        if (track == null)
-            Utils.temporallyMessage(message.getChannel().sendMessage(Utils.createInfoEmbed("The current playlist is finished.")));
+        try {
+            final AudioTrack track = this.musicService.getPlaylist(message.getGuild()).skip(args.length == 0 ? 1 : Integer.parseInt(args[0]));
+            if (track == null)
+                Utils.temporallyMessage(message.getChannel().sendMessage(Utils.createInfoEmbed("The current playlist is finished.")));
+        } catch (NumberFormatException e) {
+            Utils.temporallyMessage(message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide only numbers.")));
+        }
     }
 }

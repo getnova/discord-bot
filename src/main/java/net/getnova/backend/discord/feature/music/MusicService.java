@@ -18,7 +18,7 @@ import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service(value = "discordMusic", depends = {DiscordBot.class, CommandService.class, EventService.class, DashboardService.class, AudioService.class})
+@Service(value = "discord-music", depends = {DiscordBot.class, CommandService.class, EventService.class, DashboardService.class, AudioService.class})
 @Singleton
 public final class MusicService {
 

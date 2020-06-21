@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service(value = "discordDashboard", depends = DiscordBot.class)
+@Service(value = "discord-dashboard", depends = DiscordBot.class)
 @Singleton
 @Slf4j
 public final class DashboardService {
