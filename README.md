@@ -30,7 +30,7 @@ What things you need to install the software and how to install them
 A step by step series of examples that tell you how to get a development env running
 
 ```sh
-git clone hhttps://github.com/getnova/discord-bot
+git clone https://github.com/getnova/discord-bot
 ```
 
 Then you can open it with you IDE and start contributing.
