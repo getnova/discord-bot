@@ -73,21 +73,21 @@ public final class Playlist extends AudioEventAdapter {
     public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
         if (endReason.equals(AudioTrackEndReason.FINISHED) || endReason.equals(AudioTrackEndReason.LOAD_FAILED)) {
             final AudioTrack audioTrack = this.skip();
-            if (audioTrack == null) {
-                this.channel.sendMessage(Utils.createInfoEmbed("The current playlist is finished.")).queue();
-            } else {
+            if (audioTrack == null)
+                Utils.temporallyMessage(this.channel.sendMessage(Utils.createInfoEmbed("The current playlist is finished.")));
+            else {
                 final AudioTrackInfo info = audioTrack.getInfo();
                 if (message == null) {
-                    this.channel.sendMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author
-                            + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue(m -> this.message = m);
+                    Utils.temporallyMessage(this.channel.sendMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author
+                            + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).map(m -> this.message = m));
                 } else {
-                    this.message.editMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author
-                            + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")).queue();
+                    Utils.temporallyMessage(this.message.editMessage(Utils.createInfoEmbed("Now playing **" + info.title + "** from **" + info.author
+                            + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ").")));
                 }
             }
         }
         if (endReason.equals(AudioTrackEndReason.LOAD_FAILED)) {
-            this.channel.sendMessage(Utils.createErrorEmbed("Error while loading song.")).queue();
+            Utils.temporallyMessage(this.channel.sendMessage(Utils.createErrorEmbed("Error while loading song.")));
         }
     }
 

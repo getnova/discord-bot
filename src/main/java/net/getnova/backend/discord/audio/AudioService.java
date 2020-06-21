@@ -7,7 +7,6 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -22,7 +21,6 @@ import net.getnova.backend.service.event.PreInitServiceEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,10 +74,6 @@ public final class AudioService {
             public void trackLoaded(final AudioTrack track) {
                 playlist.add(track);
                 playlist.play();
-                final AudioTrackInfo info = playlist.getCurrent().getInfo();
-                textChannel.sendMessage(Utils.createInfoEmbed(
-                        "Now playing **" + info.title + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
-                )).queue();
                 musicService.updateDashboard(voiceChannel.getGuild());
             }
 
@@ -87,24 +81,19 @@ public final class AudioService {
             public void playlistLoaded(final AudioPlaylist audioPlaylist) {
                 playlist.addAll(audioPlaylist.getTracks());
                 playlist.play();
-                final AudioTrackInfo info = playlist.getCurrent().getInfo();
-                textChannel.sendMessage(Utils.createInfoEmbed(
-                        "Playlist with " + audioPlaylist.getTracks().size() + " items loaded. Now playing **" + info.title
-                                + "** from **" + info.author + "** (" + Utils.formatDuration(Duration.ofMillis(info.length)) + ")."
-                )).queue();
                 musicService.updateDashboard(voiceChannel.getGuild());
             }
 
             @Override
             public void noMatches() {
-                textChannel.sendMessage(Utils.createErrorEmbed("Nothing for `" + url + "` found.")).queue();
+                Utils.temporallyMessage(textChannel.sendMessage(Utils.createErrorEmbed("Nothing for `" + url + "` found.")));
             }
 
             @Override
             public void loadFailed(final FriendlyException exception) {
-                textChannel.sendMessage(Utils.createErrorEmbed(
+                Utils.temporallyMessage(textChannel.sendMessage(Utils.createErrorEmbed(
                         "Could not play `" + url + "`. Please report this error to a bot administrator so that this error can be corrected."
-                )).queue();
+                )));
                 log.error("Unable to play " + url + ".", exception);
             }
         });

@@ -3,34 +3,47 @@ package net.getnova.backend.discord.command;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.getnova.backend.discord.Utils;
+import net.getnova.backend.discord.dashboard.Dashboard;
+import net.getnova.backend.discord.dashboard.DashboardService;
 
 import javax.inject.Inject;
-import java.time.Duration;
 import java.util.Arrays;
 
 public final class CommandEvent extends ListenerAdapter {
 
     @Inject
     private CommandService commandService;
+    @Inject
+    private DashboardService dashboardService;
 
     @Override
     public void onGuildMessageReceived(final GuildMessageReceivedEvent event) {
         final String message = event.getMessage().getContentRaw();
 
-        if (!event.getAuthor().isBot() && message.startsWith("!")) {
+        if (message.startsWith("!") && !(event.getAuthor().isBot() || event.getAuthor().isFake())) {
             final String[] input = Arrays.stream(message.substring(1).split("[ \t\n\r\f]")).filter(s -> !s.isEmpty()).toArray(String[]::new);
-
             final Command command = this.commandService.getCommand(input[0]);
-            final String[] arguments = Arrays.copyOfRange(input, 1, input.length);
 
             if (command == null) {
-                event.getChannel().sendMessage(Utils.createErrorEmbed("The command `" + input[0] + "` was not found."))
-                        .delay(Duration.ofSeconds(10))
-                        .queue(msg -> {
-                            msg.delete().queue();
-                            event.getMessage().delete().queue();
-                        });
-            } else command.execute(event.getMessage(), arguments);
+                Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `" + input[0] + "` was not found.")));
+                return;
+            }
+
+            final Class<? extends Dashboard> dashboardType = command.getDashboardType();
+            if (dashboardType != null) {
+                final Dashboard dashboard = this.dashboardService.getDashboard(event.getGuild(), dashboardType);
+                if (dashboard == null) {
+                    Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `" + input[0] + "` is not configures for this server, create a text channel with the name of this module.")));
+                    return;
+                }
+
+                if (!dashboard.getChannel().equals(event.getChannel())) {
+                    Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `" + input[0] + "`is not for this channel, try it in #" + dashboard.getId() + ".")));
+                    return;
+                }
+            }
+
+            command.execute(event.getMessage(), Arrays.copyOfRange(input, 1, input.length));
         }
     }
 }

@@ -6,6 +6,7 @@ import net.getnova.backend.discord.audio.AudioService;
 import net.getnova.backend.discord.audio.AudioUtils;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
+import net.getnova.backend.discord.feature.music.MusicDashboard;
 import net.getnova.backend.discord.feature.music.MusicService;
 
 import javax.inject.Inject;
@@ -18,7 +19,7 @@ public final class StopCommand extends Command {
     private MusicService musicService;
 
     public StopCommand() {
-        super("stop", CommandCategory.MUSIC, "Stops the current music.");
+        super("stop", CommandCategory.MUSIC, MusicDashboard.class,"Stops the current music.");
     }
 
     @Override

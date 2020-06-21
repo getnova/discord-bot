@@ -1,6 +1,8 @@
 package net.getnova.backend.discord.dashboard;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -14,11 +16,12 @@ import java.util.List;
 public abstract class Dashboard {
 
     private final String id;
-    private final TextChannel channel;
+    @Setter(AccessLevel.PACKAGE)
+    private TextChannel channel;
     private Message message;
 
     @Inject
-    private JDA jda;
+    protected JDA jda;
 
     public final void update() {
         /* Clear all old messages. Which is not the current in "this.message". */
