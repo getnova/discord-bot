@@ -23,12 +23,12 @@ public final class PlayCommand extends Command {
     public void execute(final Message message, final String[] args) {
         final GuildVoiceState voiceState = message.getMember().getVoiceState();
         if (voiceState == null) {
-            Utils.temporallyMessage(message,message.getChannel().sendMessage(Utils.createErrorEmbed("You are not connected to a voice channel.")));
+            Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createErrorEmbed("You are not connected to a voice channel.")));
             return;
         }
 
         if (args.length == 0) {
-            Utils.temporallyMessage(message,message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide a valid url.")));
+            Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide a valid url.")));
             return;
         }
 

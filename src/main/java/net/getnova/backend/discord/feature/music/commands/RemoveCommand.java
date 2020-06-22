@@ -31,9 +31,9 @@ public final class RemoveCommand extends Command {
             if (track == null)
                 Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createInfoEmbed("The current playlist is finished.")));
         } catch (NumberFormatException e) {
-            Utils.temporallyMessage(message,message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide only numbers.")));
+            Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide only numbers.")));
         } catch (IndexOutOfBoundsException e) {
-            Utils.temporallyMessage(message,message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide a position witch is in the playlist.")));
+            Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide a position witch is in the playlist.")));
         }
     }
 }

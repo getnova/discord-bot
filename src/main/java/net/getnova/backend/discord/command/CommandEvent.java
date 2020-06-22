@@ -2,7 +2,6 @@ package net.getnova.backend.discord.command;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.getnova.backend.Nova;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.Utils;
 import net.getnova.backend.discord.dashboard.Dashboard;
