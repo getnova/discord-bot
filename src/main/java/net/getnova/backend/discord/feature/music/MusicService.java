@@ -7,6 +7,7 @@ import net.getnova.backend.discord.command.CommandService;
 import net.getnova.backend.discord.dashboard.DashboardService;
 import net.getnova.backend.discord.event.EventService;
 import net.getnova.backend.discord.feature.music.commands.PlayCommand;
+import net.getnova.backend.discord.feature.music.commands.RemoveCommand;
 import net.getnova.backend.discord.feature.music.commands.SkipCommand;
 import net.getnova.backend.discord.feature.music.commands.StopCommand;
 import net.getnova.backend.service.Service;
@@ -42,6 +43,7 @@ public final class MusicService {
         this.commandService.addCommand(new PlayCommand());
         this.commandService.addCommand(new StopCommand());
         this.commandService.addCommand(new SkipCommand());
+        this.commandService.addCommand(new RemoveCommand());
         this.eventService.addListener(MusicEvent.class);
         this.dashboardService.addDashboard(MusicDashboard.class);
     }

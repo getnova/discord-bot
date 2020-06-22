@@ -24,9 +24,9 @@ public final class SkipCommand extends Command {
         try {
             final AudioTrack track = this.musicService.getPlaylist(message.getGuild()).skip(args.length == 0 ? 1 : Integer.parseInt(args[0]));
             if (track == null)
-                Utils.temporallyMessage(message.getChannel().sendMessage(Utils.createInfoEmbed("The current playlist is finished.")));
+                Utils.temporallyMessage(message,message.getChannel().sendMessage(Utils.createInfoEmbed("The current playlist is finished.")));
         } catch (NumberFormatException e) {
-            Utils.temporallyMessage(message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide only numbers.")));
+            Utils.temporallyMessage(message,message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide only numbers.")));
         }
     }
 }

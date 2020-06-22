@@ -13,6 +13,6 @@ public final class PingCommand extends Command {
 
     @Override
     public void execute(final Message message, final String[] args) {
-        message.getChannel().sendMessage(Utils.createInfoEmbed("Pong!")).queue();
+        Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createInfoEmbed("Pong!")));
     }
 }

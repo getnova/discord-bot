@@ -52,7 +52,6 @@ public final class Playlist extends AudioEventAdapter {
     private void play() {
         final AudioTrack track = this.getCurrent();
         if (track != null && !this.player.startTrack(track, true)) {
-            this.queue.remove(0);
             this.dashboard.update();
         }
     }
@@ -119,5 +118,11 @@ public final class Playlist extends AudioEventAdapter {
                 log.error("Unable to play " + url + ".", exception);
             }
         });
+    }
+
+    public AudioTrack remove(final int position) throws IndexOutOfBoundsException {
+        this.queue.remove(position);
+        this.dashboard.update();
+        return this.getCurrent();
     }
 }

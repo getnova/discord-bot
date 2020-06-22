@@ -22,7 +22,7 @@ public final class StopCommand extends Command {
     @Override
     public void execute(final Message message, final String[] args) {
         if (!AudioUtils.isConnected(message.getGuild())) {
-            message.getChannel().sendMessage(Utils.createErrorEmbed("I am not connected to a voice channel.")).queue();
+            Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createErrorEmbed("I am not connected to a voice channel.")));
             return;
         }
         this.musicService.getPlaylist(message.getGuild()).stop();

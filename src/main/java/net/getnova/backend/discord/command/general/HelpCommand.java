@@ -28,6 +28,6 @@ public final class HelpCommand extends Command {
                     .map(command -> "**" + command.getName() + "** " + String.join("\n  ", command.getDescription()))
                     .collect(Collectors.joining("\n")), false);
         }
-        message.getChannel().sendMessage(embedBuilder.build()).queue();
+        Utils.temporallyMessage(message, message.getChannel().sendMessage(embedBuilder.build()));
     }
 }
