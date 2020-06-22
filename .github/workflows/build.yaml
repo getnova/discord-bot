@@ -26,7 +26,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run checks with Gradle
-        run: ./gradlew check
+        run: ./gradlew check --no-daemon
 
   build:
     needs: check
@@ -51,7 +51,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew assemble
+        run: ./gradlew assemble --no-daemon
 
       - uses: actions/upload-artifact@v2
         with:

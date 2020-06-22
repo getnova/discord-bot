@@ -30,7 +30,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run checks with Gradle
-        run: ./gradlew check
+        run: ./gradlew check --no-daemon
 
   docs:
     needs: check
@@ -56,7 +56,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build JavaDocs with Gradle
-        run: ./gradlew javadoc
+        run: ./gradlew javadoc --no-daemon
 
       - name: generate version
         id: version
