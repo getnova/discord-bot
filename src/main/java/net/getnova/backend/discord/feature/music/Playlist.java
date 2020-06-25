@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.getnova.backend.discord.Utils;
+import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.audio.AudioPlayerSendHandler;
 import net.getnova.backend.discord.audio.AudioUtils;
 import net.getnova.backend.discord.dashboard.Dashboard;
@@ -78,7 +78,7 @@ public final class Playlist extends AudioEventAdapter {
         if (endReason.equals(AudioTrackEndReason.FINISHED) || endReason.equals(AudioTrackEndReason.LOAD_FAILED))
             this.skip(1);
         if (endReason.equals(AudioTrackEndReason.LOAD_FAILED))
-            Utils.temporallyMessage(this.channel.sendMessage(Utils.createErrorEmbed("Error while loading song.")));
+            MessageUtils.temporallyMessage(this.channel.sendMessage(MessageUtils.createErrorEmbed("Error while loading song.")));
     }
 
     public AudioPlayerSendHandler getSendHandler() {
@@ -107,12 +107,12 @@ public final class Playlist extends AudioEventAdapter {
 
             @Override
             public void noMatches() {
-                Utils.temporallyMessage(channel.sendMessage(Utils.createErrorEmbed("Nothing for `" + url + "` found.")));
+                MessageUtils.temporallyMessage(channel.sendMessage(MessageUtils.createErrorEmbed("Nothing for `" + url + "` found.")));
             }
 
             @Override
             public void loadFailed(final FriendlyException exception) {
-                Utils.temporallyMessage(channel.sendMessage(Utils.createErrorEmbed(
+                MessageUtils.temporallyMessage(channel.sendMessage(MessageUtils.createErrorEmbed(
                         "Could not play `" + url + "`. Please report this error to a bot administrator so that this error can be corrected."
                 )));
                 log.error("Unable to play " + url + ".", exception);

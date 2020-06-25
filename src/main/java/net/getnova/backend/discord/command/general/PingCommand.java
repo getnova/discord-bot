@@ -1,7 +1,7 @@
 package net.getnova.backend.discord.command.general;
 
 import net.dv8tion.jda.api.entities.Message;
-import net.getnova.backend.discord.Utils;
+import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
 
@@ -13,6 +13,6 @@ public final class PingCommand extends Command {
 
     @Override
     public void execute(final Message message, final String[] args) {
-        Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createInfoEmbed("Pong!")));
+        MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createInfoEmbed("Pong!")));
     }
 }

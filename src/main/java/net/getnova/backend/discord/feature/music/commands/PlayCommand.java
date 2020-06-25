@@ -2,7 +2,7 @@ package net.getnova.backend.discord.feature.music.commands;
 
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Message;
-import net.getnova.backend.discord.Utils;
+import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
 import net.getnova.backend.discord.feature.music.MusicDashboard;
@@ -23,12 +23,12 @@ public final class PlayCommand extends Command {
     public void execute(final Message message, final String[] args) {
         final GuildVoiceState voiceState = message.getMember().getVoiceState();
         if (voiceState == null) {
-            Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createErrorEmbed("You are not connected to a voice channel.")));
+            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("You are not connected to a voice channel.")));
             return;
         }
 
         if (args.length == 0) {
-            Utils.temporallyMessage(message, message.getChannel().sendMessage(Utils.createErrorEmbed("Please provide a valid url.")));
+            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Please provide a valid url.")));
             return;
         }
 

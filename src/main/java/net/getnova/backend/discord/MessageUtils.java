@@ -8,11 +8,11 @@ import net.dv8tion.jda.api.requests.RestAction;
 import java.awt.Color;
 import java.time.Duration;
 
-public final class Utils {
+public final class MessageUtils {
 
     private static final Duration MESSAGE_DELAY = Duration.ofSeconds(20);
 
-    private Utils() {
+    private MessageUtils() {
         throw new UnsupportedOperationException();
     }
 

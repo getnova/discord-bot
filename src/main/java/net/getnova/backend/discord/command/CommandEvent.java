@@ -3,7 +3,7 @@ package net.getnova.backend.discord.command;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.getnova.backend.discord.DiscordBot;
-import net.getnova.backend.discord.Utils;
+import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.dashboard.Dashboard;
 import net.getnova.backend.discord.dashboard.DashboardService;
 
@@ -28,7 +28,7 @@ public final class CommandEvent extends ListenerAdapter {
             final Command command = this.commandService.getCommand(input[0]);
 
             if (command == null) {
-                Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `" + input[0] + "` was not found.")));
+                MessageUtils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `" + input[0] + "` was not found.")));
                 return;
             }
 
@@ -36,13 +36,13 @@ public final class CommandEvent extends ListenerAdapter {
             if (dashboardType != null) {
                 final Dashboard dashboard = this.dashboardService.getDashboard(event.getGuild(), dashboardType);
                 if (dashboard == null) {
-                    Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `"
+                    MessageUtils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `"
                             + input[0] + "` is not configures for this server, create a text channel with the name of this module.")));
                     return;
                 }
 
                 if (!dashboard.getChannel().equals(event.getChannel())) {
-                    Utils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(Utils.createErrorEmbed("The command `"
+                    MessageUtils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `"
                             + input[0] + "`is not for this channel, try it in #" + dashboard.getId() + ".")));
                     return;
                 }
