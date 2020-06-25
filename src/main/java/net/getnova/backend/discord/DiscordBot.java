@@ -1,5 +1,6 @@
 package net.getnova.backend.discord;
 
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -39,6 +40,7 @@ public class DiscordBot {
                 .setAutoReconnect(true)
                 .setRequestTimeoutRetry(true)
                 .setActivity(Activity.watching("people" + this.config.getPrefix()))
+                .setAudioSendFactory(new NativeAudioSendFactory())
                 .build();
         event.getBinder().bind(JDA.class).toInstance(this.jda);
         try {
