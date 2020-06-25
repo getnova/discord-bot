@@ -40,20 +40,19 @@ public final class DashboardService {
 
     @PostInitService
     private void postInit(final PostInitServiceEvent event) {
-        final List<Guild> guilds = this.injectionHandler.getInjector().getInstance(JDA.class).getGuilds();
-
-        guilds.forEach(guild -> {
+        for (final Guild guild : this.injectionHandler.getInjector().getInstance(JDA.class).getGuilds()) {
+            Dashboard dashboard;
             List<TextChannel> channels;
 
             for (final Class<? extends Dashboard> dashboardType : this.dashboardTypes) {
-                final Dashboard dashboard = this.injectionHandler.getInjector().getInstance(dashboardType);
+                dashboard = this.injectionHandler.getInjector().getInstance(dashboardType);
                 channels = guild.getTextChannelsByName(this.nova.isDebug() ? dashboard.getId() + "-debug" : dashboard.getId(), false);
                 if (!channels.isEmpty()) {
                     dashboard.setChannel(channels.get(0));
                     this.dashboards.add(dashboard);
                 }
             }
-        });
+        }
     }
 
     @StartService

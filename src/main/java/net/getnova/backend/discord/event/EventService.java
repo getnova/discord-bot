@@ -18,6 +18,7 @@ import java.util.Set;
 public final class EventService {
 
     private final Set<Class<? extends ListenerAdapter>> listeners;
+
     @Inject
     private InjectionHandler injectionHandler;
 

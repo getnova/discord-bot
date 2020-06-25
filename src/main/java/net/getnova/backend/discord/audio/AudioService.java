@@ -27,7 +27,7 @@ public final class AudioService {
     private EventService eventService;
 
     @Inject
-    public AudioService(final EventService eventService) {
+    public AudioService() {
         this.playerManager = new DefaultAudioPlayerManager();
 
         AudioSourceManagers.registerRemoteSources(this.playerManager);

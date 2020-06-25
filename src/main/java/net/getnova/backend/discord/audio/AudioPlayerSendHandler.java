@@ -4,7 +4,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public final class AudioPlayerSendHandler implements AudioSendHandler {
@@ -23,13 +22,13 @@ public final class AudioPlayerSendHandler implements AudioSendHandler {
     @Override
     public boolean canProvide() {
         // returns true if audio was provided
-        return audioPlayer.provide(this.frame);
+        return this.audioPlayer.provide(this.frame);
     }
 
     @Override
     public ByteBuffer provide20MsAudio() {
         // flip to make it a read buffer
-        ((Buffer) this.buffer).flip();
+        this.buffer.flip();
         return this.buffer;
     }
 

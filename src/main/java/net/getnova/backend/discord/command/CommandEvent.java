@@ -24,7 +24,7 @@ public final class CommandEvent extends ListenerAdapter {
         final String message = event.getMessage().getContentRaw();
 
         if (message.startsWith(this.discordBot.getConfig().getPrefix()) && !(event.getAuthor().isBot() || event.getAuthor().isFake())) {
-            final String[] input = Arrays.stream(message.substring(1).split("[ \t\n\r\f]")).filter(s -> !s.isEmpty()).toArray(String[]::new);
+            final String[] input = this.parseInput(message);
             final Command command = this.commandService.getCommand(input[0]);
 
             if (command == null) {
@@ -50,5 +50,9 @@ public final class CommandEvent extends ListenerAdapter {
 
             command.execute(event.getMessage(), Arrays.copyOfRange(input, 1, input.length));
         }
+    }
+
+    private String[] parseInput(final String message) {
+        return Arrays.stream(message.substring(1).split("[ \t\n\r\f]")).filter(s -> !s.isEmpty()).toArray(String[]::new);
     }
 }
