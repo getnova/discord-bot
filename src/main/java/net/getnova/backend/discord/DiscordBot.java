@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.getnova.backend.Nova;
 import net.getnova.backend.config.ConfigService;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
@@ -25,9 +24,6 @@ public class DiscordBot {
     @Getter
     private final DiscordBotConfig config;
     private JDA jda;
-
-    @Inject
-    private Nova nova;
 
     @Inject
     public DiscordBot(final ConfigService configService) {
