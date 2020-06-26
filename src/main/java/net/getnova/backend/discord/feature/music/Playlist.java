@@ -58,7 +58,7 @@ public final class Playlist extends AudioEventAdapter {
 
     public AudioTrack skip(final int count) {
         if (!this.queue.isEmpty() && count > 0) {
-            this.queue.subList(0, count).clear();
+            this.queue.subList(0, Math.min(count, this.queue.size())).clear();
             this.player.stopTrack();
             this.play();
             this.dashboard.update();

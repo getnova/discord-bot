@@ -40,6 +40,6 @@ public final class AudioUtils {
 
     public static boolean isConnectedTo(final VoiceChannel channel) {
         final AudioManager audioManager = channel.getGuild().getAudioManager();
-        return audioManager.isConnected() && audioManager.getConnectedChannel().equals(channel);
+        return audioManager.isConnected() && audioManager.getConnectedChannel() != null && audioManager.getConnectedChannel().equals(channel);
     }
 }
