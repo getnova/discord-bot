@@ -29,9 +29,7 @@ public final class AudioService {
     @Inject
     public AudioService() {
         this.playerManager = new DefaultAudioPlayerManager();
-
         AudioSourceManagers.registerRemoteSources(this.playerManager);
-        AudioSourceManagers.registerLocalSource(this.playerManager);
     }
 
     @PreInitService
