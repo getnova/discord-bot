@@ -27,6 +27,7 @@ public final class Playlist extends AudioEventAdapter {
     private final AudioPlayerManager playerManager;
     @Getter
     private final AudioPlayer player;
+    @Getter
     private final Dashboard dashboard;
     private final TextChannel channel;
     @Getter
@@ -59,9 +60,12 @@ public final class Playlist extends AudioEventAdapter {
     public AudioTrack skip(final int count) {
         if (!this.queue.isEmpty() && count > 0) {
             this.queue.subList(0, Math.min(count, this.queue.size())).clear();
-            this.player.stopTrack();
-            this.play();
-            this.dashboard.update();
+            if (this.queue.isEmpty()) new Thread(this::stop).start();
+            else {
+                this.player.stopTrack();
+                this.play();
+                this.dashboard.update();
+            }
         }
         return this.getCurrent();
     }
@@ -85,13 +89,12 @@ public final class Playlist extends AudioEventAdapter {
         return new AudioPlayerSendHandler(this.player);
     }
 
-    public void play(final VoiceChannel voiceChannel, final String url) {
-        if (!AudioUtils.isConnectedTo(voiceChannel)) AudioUtils.join(voiceChannel);
-
-        this.playerManager.loadItemOrdered(this, url, new AudioLoadResultHandler() {
+    public void play(final VoiceChannel voiceChannel, final String identifier) {
+        this.playerManager.loadItem(identifier, new AudioLoadResultHandler() {
 
             @Override
             public void trackLoaded(final AudioTrack track) {
+                if (!AudioUtils.isConnectedTo(voiceChannel)) AudioUtils.join(voiceChannel);
                 queue.add(track);
                 play();
                 dashboard.update();
@@ -99,6 +102,7 @@ public final class Playlist extends AudioEventAdapter {
 
             @Override
             public void playlistLoaded(final AudioPlaylist audioPlaylist) {
+                if (!AudioUtils.isConnectedTo(voiceChannel)) AudioUtils.join(voiceChannel);
                 queue.addAll(audioPlaylist.getTracks());
                 shuffle();
                 play();
@@ -107,15 +111,15 @@ public final class Playlist extends AudioEventAdapter {
 
             @Override
             public void noMatches() {
-                MessageUtils.temporallyMessage(channel.sendMessage(MessageUtils.createErrorEmbed("Nothing for `" + url + "` found.")));
+                MessageUtils.temporallyMessage(channel.sendMessage(MessageUtils.createErrorEmbed("Nothing for `" + identifier + "` found.")));
             }
 
             @Override
             public void loadFailed(final FriendlyException exception) {
                 MessageUtils.temporallyMessage(channel.sendMessage(MessageUtils.createErrorEmbed(
-                        "Could not play `" + url + "`. Please report this error to a bot administrator so that this error can be corrected."
+                        "Could not play `" + identifier + "`. Please report this error to a bot administrator so that this error can be corrected."
                 )));
-                log.error("Unable to play " + url + ".", exception);
+                log.error("Unable to play " + identifier + ".", exception);
             }
         });
     }

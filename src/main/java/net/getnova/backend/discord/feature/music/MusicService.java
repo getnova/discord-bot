@@ -13,16 +13,21 @@ import net.getnova.backend.discord.feature.music.commands.StopCommand;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
+import net.getnova.backend.service.event.StartService;
+import net.getnova.backend.service.event.StartServiceEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Service(value = "discord-music", depends = {DiscordBot.class, CommandService.class, EventService.class, DashboardService.class, AudioService.class})
 @Singleton
 public final class MusicService {
 
+    private final Timer timer;
     private final Map<Long, Playlist> playlists;
 
     @Inject
@@ -35,6 +40,7 @@ public final class MusicService {
     private AudioService audioService;
 
     public MusicService() {
+        this.timer = new Timer();
         this.playlists = new HashMap<>();
     }
 
@@ -48,9 +54,14 @@ public final class MusicService {
         this.dashboardService.addDashboard(MusicDashboard.class);
     }
 
-    public void updateDashboard(final Guild guild) {
-        final MusicDashboard dashboard = this.dashboardService.getDashboard(guild, MusicDashboard.class);
-        if (dashboard != null) dashboard.update();
+    @StartService
+    private void start(final StartServiceEvent event) {
+        this.timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                playlists.values().forEach((playlist) -> playlist.getDashboard().update());
+            }
+        }, 0, 15 * 1000);
     }
 
     public Playlist getPlaylist(final Guild guild) {

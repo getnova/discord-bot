@@ -28,10 +28,10 @@ public final class PlayCommand extends Command {
         }
 
         if (args.length == 0) {
-            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Please provide a valid url.")));
+            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Please provide a valid identifier.")));
             return;
         }
 
-        this.musicService.getPlaylist(message.getGuild()).play(voiceState.getChannel(), args[0]);
+        this.musicService.getPlaylist(message.getGuild()).play(voiceState.getChannel(), String.join(" ", args));
     }
 }

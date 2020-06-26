@@ -56,11 +56,7 @@ public abstract class Dashboard {
 
         /* Create/update the old message. */
         if (this.message == null) this.channel.sendMessage(this.generate()).queue(message -> this.message = message);
-        else {
-            final List<MessageEmbed> embeds = this.message.getEmbeds();
-            final MessageEmbed embed = this.generate();
-            if (!(embeds.size() == 1 && embeds.get(0).equals(embed))) this.message.editMessage(embed).queue();
-        }
+        else this.message.editMessage(this.generate()).queue();
     }
 
     /**
