@@ -11,7 +11,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.inject.Inject;
+import java.time.OffsetDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -37,7 +40,19 @@ public abstract class Dashboard {
             return !messagePresent || !this.message.equals(message);
         }).collect(Collectors.toUnmodifiableList());
         if (messagesToDelete.size() == 1) messagesToDelete.get(0).delete().queue();
-        else if (!messagesToDelete.isEmpty()) this.channel.deleteMessages(messagesToDelete).queue();
+        else if (!messagesToDelete.isEmpty()) {
+            final Set<Message> missingMessages = new LinkedHashSet<>();
+            final OffsetDateTime currentOffsetTowWeeks = OffsetDateTime.now().minusDays(12);
+            final Set<Message> bulkDeleteMessages = messagesToDelete.stream().filter(currentMessage -> {
+                if (!currentMessage.getTimeCreated().isAfter(currentOffsetTowWeeks)) {
+                    missingMessages.add(currentMessage);
+                    return false;
+                } else return true;
+            }).collect(Collectors.toUnmodifiableSet());
+            if (bulkDeleteMessages.size() > 1) this.channel.deleteMessages(bulkDeleteMessages).queue();
+            else if (!bulkDeleteMessages.isEmpty()) bulkDeleteMessages.iterator().next().delete().queue();
+            for (final Message missingMessage : missingMessages) missingMessage.delete().queue();
+        }
 
         /* Create/update the old message. */
         if (this.message == null) this.channel.sendMessage(this.generate()).queue(message -> this.message = message);
