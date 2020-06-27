@@ -1,5 +1,6 @@
 package net.getnova.backend.discord.feature.music;
 
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.audio.AudioService;
@@ -26,6 +27,7 @@ import java.util.TimerTask;
 
 @Service(value = "discord-music", depends = {DiscordBot.class, CommandService.class, EventService.class, DashboardService.class, AudioService.class})
 @Singleton
+@Slf4j
 public final class MusicService {
 
     private final Timer timer;
@@ -61,7 +63,11 @@ public final class MusicService {
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                playlists.values().forEach((playlist) -> playlist.getDashboard().update());
+                try {
+                    playlists.values().forEach((playlist) -> playlist.getDashboard().update());
+                } catch (Exception e) {
+                    log.error("Error while updating the music dashboard.", e);
+                }
             }
         }, 0, 15 * 1000);
     }
