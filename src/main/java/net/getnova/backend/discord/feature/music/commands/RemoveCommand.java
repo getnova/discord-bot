@@ -9,6 +9,7 @@ import net.getnova.backend.discord.feature.music.MusicDashboard;
 import net.getnova.backend.discord.feature.music.MusicService;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 
 public final class RemoveCommand extends Command {
 
@@ -27,9 +28,12 @@ public final class RemoveCommand extends Command {
         }
 
         try {
-            final AudioTrack track = this.musicService.getPlaylist(message.getGuild()).remove(Integer.parseInt(args[0]) - 1);
-            if (track == null)
-                MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createInfoEmbed("The current playlist is finished.")));
+            final int[] ints = Arrays.stream(args).mapToInt(Integer::parseInt).distinct().sorted().toArray();
+            for (int i = 0; i < ints.length; i++) {
+                final AudioTrack track = this.musicService.getPlaylist(message.getGuild()).remove(Integer.parseInt(args[i]) - (1 + i));
+                if (track == null)
+                    MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createInfoEmbed("The current playlist is finished.")));
+            }
         } catch (NumberFormatException e) {
             MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Please provide only numbers.")));
         } catch (IndexOutOfBoundsException e) {

@@ -73,6 +73,7 @@ public final class Playlist extends AudioEventAdapter {
     public void stop() {
         AudioUtils.leave(this.channel.getGuild());
         this.player.stopTrack();
+        this.player.setPaused(false);
         this.queue.clear();
         this.dashboard.update();
     }
