@@ -42,9 +42,10 @@ public final class MusicDashboard extends Dashboard {
         final EmbedBuilder embedBuilder = MessageUtils.createEmbedBuilder()
                 .setTitle("Music :small_orange_diamond: Playlist with " + queue.size() + " items")
                 .setDescription("Here you always see the state of the music that is currently being played.")
-                .addField("Progress", "~~" + "-".repeat(Math.max(0, x - 1)) + ":white_circle:" + "-".repeat(Math.max(0, 39 - x)) + "~~"
-                        + " (" + MessageUtils.formatDuration(Duration.ofMillis(audioTrack.getPosition())) + "/"
-                        + MessageUtils.formatDuration(Duration.ofMillis(audioTrack.getDuration())) + ")", false);
+                .addField("Progress" + (playlist.getPlayer().isPaused() ? " (paused)" : ""),
+                        "~~" + "-".repeat(Math.max(0, x - 1)) + ":white_circle:" + "-".repeat(Math.max(0, 39 - x)) + "~~"
+                                + " (" + MessageUtils.formatDuration(Duration.ofMillis(audioTrack.getPosition())) + "/"
+                                + MessageUtils.formatDuration(Duration.ofMillis(audioTrack.getDuration())) + ")", false);
 
         final int size = Math.min(queue.size(), 10);
         for (int i = 0; i < size; i++) {

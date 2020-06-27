@@ -16,7 +16,7 @@ public final class StopCommand extends Command {
     private MusicService musicService;
 
     public StopCommand() {
-        super("stop", CommandCategory.MUSIC, MusicDashboard.class, "Stops the current music.");
+        super("leave", CommandCategory.MUSIC, MusicDashboard.class, "Stops the current music.");
     }
 
     @Override

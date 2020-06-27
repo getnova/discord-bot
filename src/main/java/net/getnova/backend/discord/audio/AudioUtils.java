@@ -26,7 +26,7 @@ public final class AudioUtils {
         audioManager.setSelfDeafened(true);
     }
 
-    public static void stop(final Guild guild) {
+    public static void leave(final Guild guild) {
         final AudioManager audioManager = guild.getAudioManager();
         if (audioManager.isConnected()) {
             audioManager.setSendingHandler(null);
