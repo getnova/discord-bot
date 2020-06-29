@@ -52,8 +52,8 @@ public final class MessageUtils {
 
     public static void temporallyMessage(final Message senderMessage, final RestAction<Message> messageAction) {
         messageAction.delay(MESSAGE_DELAY).queue(message -> {
-            if (senderMessage != null) senderMessage.delete().queue();
-            message.delete().queue();
+            if (senderMessage != null) senderMessage.delete().onErrorMap(o1 -> null).queue();
+            message.delete().onErrorMap(o1 -> null).queue();
         });
     }
 
