@@ -17,6 +17,8 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.getnova.backend.discord.audio.AudioUtils;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
@@ -95,9 +97,9 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
         if (!AudioUtils.isConnectedTo(this.voiceChannel)) AudioUtils.join(this.voiceChannel);
 
         if (!this.queue.isEmpty()) if (this.isPaused()) {
-            final AudioTrack track = this.queue.peek();
+            final AudioTrack track = this.queue.peek().makeClone();
             track.setPosition(this.pausePosition);
-            this.player.playTrack(this.queue.peek());
+            this.player.playTrack(track);
             this.pausePosition = Long.MIN_VALUE;
             this.update.accept(this);
             return true;
@@ -152,16 +154,20 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
         this.update.accept(this);
     }
 
+    public int size() {
+        return this.queue.size();
+    }
+
     public boolean isEmpty() {
         return this.queue.isEmpty();
     }
 
     public long getPosition() {
-        return this.isPlaying() ? this.player.getPlayingTrack().getPosition() : 0;
+        return this.isPaused() ? this.pausePosition : this.isPlaying() ? this.player.getPlayingTrack().getPosition() : 0;
     }
 
     public long getDuration() {
-        return this.isPlaying() ? this.player.getPlayingTrack().getDuration() : 0;
+        return this.isPaused() ? this.peek().getDuration() : this.isPlaying() ? this.player.getPlayingTrack().getDuration() : 0;
     }
 
     @Override
@@ -188,7 +194,9 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
 
     @Override
     public void playlistLoaded(final AudioPlaylist playlist) {
-        this.addAll(playlist.getTracks());
+        final List<AudioTrack> tracks = playlist.getTracks();
+        Collections.shuffle(tracks);
+        this.addAll(tracks);
         if (!this.isPlaying()) this.play();
     }
 

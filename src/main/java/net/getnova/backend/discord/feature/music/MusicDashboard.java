@@ -13,8 +13,11 @@ import java.util.Queue;
 
 public final class MusicDashboard extends Dashboard {
 
+    private static final int PAGE_SIZE = 10;
+
     @Inject
     private MusicService musicService;
+    private int offset = 0;
 
     public MusicDashboard() {
         super("music");
@@ -26,6 +29,14 @@ public final class MusicDashboard extends Dashboard {
         });
         this.addReactionListener("next_track_button", event -> this.musicService.getPlayer(event.getGuild()).skip(1));
         this.addReactionListener("stop_button", event -> this.musicService.getPlayer(event.getGuild()).stop());
+        this.addReactionListener("arrow_up", event -> {
+            if (this.offset > 0) this.offset -= PAGE_SIZE;
+            this.update();
+        });
+        this.addReactionListener("arrow_down", event -> {
+            if (this.offset < this.musicService.getPlayer(this.getGuild()).size() - PAGE_SIZE) this.offset += PAGE_SIZE;
+            this.update();
+        });
     }
 
     @Override
@@ -54,14 +65,12 @@ public final class MusicDashboard extends Dashboard {
                                 + " (" + MessageUtils.formatDuration(Duration.ofMillis(player.getPosition())) + "/"
                                 + MessageUtils.formatDuration(Duration.ofMillis(player.getDuration())) + ")", false);
 
-        final int size = queue.size();
-        int i = 0;
-        for (final AudioTrack track : queue) {
-            final AudioTrackInfo info = track.getInfo();
+        final int size = Math.min(queue.size(), this.offset + PAGE_SIZE);
+        final AudioTrack[] audioTracks = queue.toArray(new AudioTrack[0]);
+        for (int i = this.offset; i < size; i++) {
+            final AudioTrackInfo info = audioTracks[i].getInfo();
             embedBuilder.addField(info.author, "**" + (i + 1) + ". [" + info.title + "](" + info.uri + ")** ("
                     + MessageUtils.formatDuration(Duration.ofMillis(info.length)) + ")", false);
-            if (i == size) break;
-            i++;
         }
 
         return embedBuilder.build();
