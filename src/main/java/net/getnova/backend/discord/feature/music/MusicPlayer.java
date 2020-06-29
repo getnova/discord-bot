@@ -42,6 +42,7 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
         this.queue = new ConcurrentLinkedQueue<>();
         this.playerManager = playerManager;
         this.player = this.playerManager.createPlayer();
+        this.player.addListener(this);
         this.update = update;
 
         this.pausePosition = Long.MIN_VALUE;
