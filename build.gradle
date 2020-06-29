@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:4.1.1_167'
+    compile 'net.dv8tion:JDA:4.2.0_168'
     compile 'com.sedmelluq:lavaplayer:1.3.50'
     compile 'com.kcthota:emoji4j:6.0'
 
