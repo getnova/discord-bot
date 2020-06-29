@@ -16,7 +16,7 @@ import net.getnova.backend.discord.reaction.ReactionEvent;
 import net.getnova.backend.discord.reaction.ReactionService;
 
 import javax.inject.Inject;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -41,7 +41,7 @@ public abstract class Dashboard {
 
     protected Dashboard(final String id) {
         this.id = id;
-        this.reactionListeners = new HashMap<>();
+        this.reactionListeners = new LinkedHashMap<>();
     }
 
     public final void update() {
@@ -97,7 +97,7 @@ public abstract class Dashboard {
         return this.channel.getGuild();
     }
 
-    protected void addReactionListener(final String emoji, final Consumer<GenericMessageReactionEvent> listener) {
+    protected final void addReactionListener(final String emoji, final Consumer<GenericMessageReactionEvent> listener) {
         this.reactionListeners.put(emoji, listener);
     }
 }

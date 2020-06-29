@@ -3,15 +3,14 @@ package net.getnova.backend.discord.feature.music;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.getnova.backend.discord.DiscordBot;
+import net.getnova.backend.discord.audio.AudioPlayerSendHandler;
 import net.getnova.backend.discord.audio.AudioService;
 import net.getnova.backend.discord.command.CommandService;
+import net.getnova.backend.discord.dashboard.Dashboard;
 import net.getnova.backend.discord.dashboard.DashboardService;
 import net.getnova.backend.discord.event.EventService;
-import net.getnova.backend.discord.feature.music.commands.PauseCommand;
-import net.getnova.backend.discord.feature.music.commands.PlayCommand;
-import net.getnova.backend.discord.feature.music.commands.RemoveCommand;
+import net.getnova.backend.discord.feature.music.commands.LoadCommand;
 import net.getnova.backend.discord.feature.music.commands.SkipCommand;
-import net.getnova.backend.discord.feature.music.commands.StopCommand;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
@@ -31,7 +30,7 @@ import java.util.TimerTask;
 public final class MusicService {
 
     private final Timer timer;
-    private final Map<Long, Playlist> playlists;
+    private final Map<Long, MusicPlayer> players;
 
     @Inject
     private CommandService commandService;
@@ -44,16 +43,13 @@ public final class MusicService {
 
     public MusicService() {
         this.timer = new Timer();
-        this.playlists = new HashMap<>();
+        this.players = new HashMap<>();
     }
 
     @PreInitService
     private void preInit(final PreInitServiceEvent event) {
-        this.commandService.addCommand(new PlayCommand());
-        this.commandService.addCommand(new StopCommand());
+        this.commandService.addCommand(new LoadCommand());
         this.commandService.addCommand(new SkipCommand());
-        this.commandService.addCommand(new RemoveCommand());
-        this.commandService.addCommand(new PauseCommand());
         this.eventService.addListener(MusicEvent.class);
         this.dashboardService.addDashboard(MusicDashboard.class);
     }
@@ -64,7 +60,7 @@ public final class MusicService {
             @Override
             public void run() {
                 try {
-                    playlists.values().forEach((playlist) -> playlist.getDashboard().update());
+                    dashboardService.getDashboards(MusicDashboard.class).forEach(Dashboard::update);
                 } catch (Exception e) {
                     log.error("Error while updating the music dashboard.", e);
                 }
@@ -72,17 +68,15 @@ public final class MusicService {
         }, 0, 15 * 1000);
     }
 
-    public Playlist getPlaylist(final Guild guild) {
-        Playlist playlist = this.playlists.get(guild.getIdLong());
+    public MusicPlayer getPlayer(final Guild guild) {
+        MusicPlayer player = this.players.get(guild.getIdLong());
 
-        if (playlist == null) {
-            final MusicDashboard dashboard = this.dashboardService.getDashboard(guild, MusicDashboard.class);
-            if (dashboard == null) return null;
-            playlist = new Playlist(dashboard, this.audioService.getPlayerManager());
-            this.playlists.put(guild.getIdLong(), playlist);
+        if (player == null) {
+            player = new MusicPlayer(this.audioService.getPlayerManager(), currentPayer -> this.dashboardService.getDashboard(guild, MusicDashboard.class).update());
+            this.players.put(guild.getIdLong(), player);
         }
 
-        guild.getAudioManager().setSendingHandler(playlist.getSendHandler());
-        return playlist;
+        guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(player.getPlayer()));
+        return player;
     }
 }

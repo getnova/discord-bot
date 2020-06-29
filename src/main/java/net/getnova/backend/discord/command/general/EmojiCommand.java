@@ -6,7 +6,7 @@ import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
 
-public class EmojiCommand extends Command {
+public final class EmojiCommand extends Command {
 
     public EmojiCommand() {
         super("emoji", CommandCategory.GENERAL, "Prints the name of a emoji.");

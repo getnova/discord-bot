@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 @Service(value = "discord-reaction", depends = {DiscordBot.class, EventService.class})
 @Singleton
 @Slf4j
-public class ReactionService {
+public final class ReactionService {
 
     @Getter(AccessLevel.PACKAGE)
     private final Map<Long, Consumer<ReactionEvent>> reactionCallbacks;

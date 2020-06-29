@@ -15,12 +15,12 @@ final class MusicEvent extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(final GuildVoiceLeaveEvent event) {
         if (AudioUtils.isConnectedTo(event.getChannelLeft()) && event.getChannelLeft().getMembers().size() - 1 == 0)
-            this.musicService.getPlaylist(event.getGuild()).getPlayer().setPaused(true);
+            this.musicService.getPlayer(event.getGuild()).pause();
     }
 
     @Override
     public void onGuildVoiceMove(final GuildVoiceMoveEvent event) {
         if (AudioUtils.isConnectedTo(event.getChannelLeft()) && event.getChannelLeft().getMembers().size() - 1 == 0)
-            this.musicService.getPlaylist(event.getGuild()).getPlayer().setPaused(true);
+            this.musicService.getPlayer(event.getGuild()).pause();
     }
 }
