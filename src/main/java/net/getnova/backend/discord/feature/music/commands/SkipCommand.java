@@ -22,9 +22,9 @@ public final class SkipCommand extends Command {
     public void execute(final Message message, final String[] args) {
         try {
             if (!this.musicService.getPlayer(message.getGuild()).skip(args.length == 0 ? 1 : Integer.parseInt(args[0])))
-                MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createInfoEmbed("The current playlist is finished.")));
+                message.getChannel().sendMessage(MessageUtils.createInfoEmbed("The current playlist is finished.")).queue();
         } catch (NumberFormatException e) {
-            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Please provide only numbers.")));
+            message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Please provide only numbers.")).queue();
         }
     }
 }

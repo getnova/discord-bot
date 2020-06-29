@@ -24,13 +24,13 @@ public final class LoadCommand extends Command {
     public void execute(final Message message, final String[] args) {
         final GuildVoiceState voiceState = message.getMember().getVoiceState();
         if (voiceState == null) {
-            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("You are not connected to a voice channel.")));
+            message.getChannel().sendMessage(MessageUtils.createErrorEmbed("You are not connected to a voice channel.")).queue();
             return;
         }
 
         final MusicPlayer player = this.musicService.getPlayer(message.getGuild());
         if (args.length == 0) {
-            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Please provide a valid identifier.")));
+            message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Please provide a valid identifier.")).queue();
             return;
         }
 

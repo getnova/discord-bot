@@ -206,5 +206,6 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
 
     @Override
     public void loadFailed(final FriendlyException exception) {
+        log.error("Unable to load track.", exception);
     }
 }
