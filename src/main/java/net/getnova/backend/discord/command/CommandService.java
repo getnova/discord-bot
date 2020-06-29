@@ -2,6 +2,7 @@ package net.getnova.backend.discord.command;
 
 import lombok.Getter;
 import net.getnova.backend.discord.DiscordBot;
+import net.getnova.backend.discord.command.general.EmojiCommand;
 import net.getnova.backend.discord.command.general.HelpCommand;
 import net.getnova.backend.discord.command.general.PingCommand;
 import net.getnova.backend.discord.dashboard.DashboardService;
@@ -37,6 +38,7 @@ public final class CommandService {
         this.eventService.addListener(CommandEvent.class);
         this.addCommand(new HelpCommand());
         this.addCommand(new PingCommand());
+        this.addCommand(new EmojiCommand());
     }
 
     Command getCommand(final String name) {

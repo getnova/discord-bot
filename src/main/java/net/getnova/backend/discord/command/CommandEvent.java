@@ -10,7 +10,7 @@ import net.getnova.backend.discord.dashboard.DashboardService;
 import javax.inject.Inject;
 import java.util.Arrays;
 
-public final class CommandEvent extends ListenerAdapter {
+final class CommandEvent extends ListenerAdapter {
 
     @Inject
     private CommandService commandService;

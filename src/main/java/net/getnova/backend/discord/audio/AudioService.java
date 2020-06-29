@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.event.EventService;
-import net.getnova.backend.discord.feature.music.MusicEvent;
 import net.getnova.backend.service.Service;
-import net.getnova.backend.service.event.PreInitService;
-import net.getnova.backend.service.event.PreInitServiceEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,16 +21,8 @@ public final class AudioService {
     private final AudioPlayerManager playerManager;
 
     @Inject
-    private EventService eventService;
-
-    @Inject
     public AudioService() {
         this.playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(this.playerManager);
-    }
-
-    @PreInitService
-    private void preInit(final PreInitServiceEvent event) {
-        this.eventService.addListener(MusicEvent.class);
     }
 }

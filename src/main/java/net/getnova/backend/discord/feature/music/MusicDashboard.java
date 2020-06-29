@@ -18,6 +18,10 @@ public final class MusicDashboard extends Dashboard {
 
     public MusicDashboard() {
         super("music");
+
+        this.addReactionListener("play_or_pause_button", event -> {
+        });
+        this.addReactionListener("next_track_button", event -> this.musicService.getPlaylist(event.getGuild()).skip(1));
     }
 
     @Override

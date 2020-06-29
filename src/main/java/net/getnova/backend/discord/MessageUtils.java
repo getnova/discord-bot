@@ -1,12 +1,20 @@
 package net.getnova.backend.discord;
 
+import emoji4j.Emoji;
+import emoji4j.EmojiUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import java.awt.Color;
 import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class MessageUtils {
 
@@ -47,5 +55,29 @@ public final class MessageUtils {
             if (senderMessage != null) senderMessage.delete().queue();
             message.delete().queue();
         });
+    }
+
+    public static List<String> getEmojiName(final String emojiValue) {
+        final Emoji emoji = EmojiUtils.getEmoji(emojiValue);
+        return emoji == null ? List.of(emojiValue) : emoji.getAliases();
+    }
+
+    public static void delete(final TextChannel channel, final List<Message> messages) {
+        if (messages.size() == 1) messages.get(0).delete().queue();
+        else if (!messages.isEmpty()) {
+            final Set<Message> missingMessages = new LinkedHashSet<>();
+            final OffsetDateTime currentOffsetTowWeeks = OffsetDateTime.now().minusDays(12);
+
+            final Set<Message> bulkDeleteMessages = messages.stream().filter(currentMessage -> {
+                if (!currentMessage.getTimeCreated().isAfter(currentOffsetTowWeeks)) {
+                    missingMessages.add(currentMessage);
+                    return false;
+                } else return true;
+            }).collect(Collectors.toUnmodifiableSet());
+
+            if (bulkDeleteMessages.size() > 1) channel.deleteMessages(bulkDeleteMessages).queue();
+            else if (!bulkDeleteMessages.isEmpty()) bulkDeleteMessages.iterator().next().delete().queue();
+            missingMessages.forEach(message -> message.delete().queue());
+        }
     }
 }

@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.getnova.backend.Nova;
 import net.getnova.backend.discord.DiscordBot;
+import net.getnova.backend.discord.reaction.ReactionService;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PostInitService;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service(value = "discord-dashboard", depends = DiscordBot.class)
+@Service(value = "discord-dashboard", depends = {DiscordBot.class, ReactionService.class})
 @Singleton
 @Slf4j
 public final class DashboardService {

@@ -7,7 +7,7 @@ import net.getnova.backend.discord.audio.AudioUtils;
 
 import javax.inject.Inject;
 
-public final class MusicEvent extends ListenerAdapter {
+final class MusicEvent extends ListenerAdapter {
 
     @Inject
     private MusicService musicService;

@@ -31,7 +31,7 @@ public class DiscordBot {
 
     @PreInitService
     private void preInit(final PreInitServiceEvent event) throws LoginException {
-        this.jda = JDABuilder.create(this.config.getToken(), GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_VOICE_STATES)
+        this.jda = JDABuilder.create(this.config.getToken(), GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS)
                 .setAutoReconnect(true)
                 .setRequestTimeoutRetry(true)
                 .setActivity(Activity.watching("people" + this.config.getPrefix()))
