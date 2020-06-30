@@ -9,7 +9,8 @@ import net.getnova.backend.discord.command.CommandService;
 import net.getnova.backend.discord.dashboard.Dashboard;
 import net.getnova.backend.discord.dashboard.DashboardService;
 import net.getnova.backend.discord.event.EventService;
-import net.getnova.backend.discord.feature.music.commands.LoadCommand;
+import net.getnova.backend.discord.feature.music.commands.PlayCommand;
+import net.getnova.backend.discord.feature.music.commands.SearchCommand;
 import net.getnova.backend.discord.feature.music.commands.SkipCommand;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
@@ -48,7 +49,8 @@ public final class MusicService {
 
     @PreInitService
     private void preInit(final PreInitServiceEvent event) {
-        this.commandService.addCommand(new LoadCommand());
+        this.commandService.addCommand(new PlayCommand());
+        this.commandService.addCommand(new SearchCommand());
         this.commandService.addCommand(new SkipCommand());
         this.eventService.addListener(MusicEvent.class);
         this.dashboardService.addDashboard(MusicDashboard.class);

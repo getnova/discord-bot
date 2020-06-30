@@ -196,8 +196,17 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
     @Override
     public void playlistLoaded(final AudioPlaylist playlist) {
         final List<AudioTrack> tracks = playlist.getTracks();
-        Collections.shuffle(tracks);
-        this.addAll(tracks);
+
+        if (playlist.isSearchResult()) {
+            for (final AudioTrack track : tracks) {
+                this.add(track);
+                break;
+            }
+        } else {
+            Collections.shuffle(tracks);
+            this.addAll(tracks);
+        }
+
         if (!this.isPlaying()) this.play();
     }
 

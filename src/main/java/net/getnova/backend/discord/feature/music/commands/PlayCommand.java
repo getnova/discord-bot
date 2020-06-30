@@ -11,13 +11,13 @@ import net.getnova.backend.discord.feature.music.MusicService;
 
 import javax.inject.Inject;
 
-public final class LoadCommand extends Command {
+public final class PlayCommand extends Command {
 
     @Inject
     private MusicService musicService;
 
-    public LoadCommand() {
-        super("load", CommandCategory.MUSIC, MusicDashboard.class, "Loads music from the given url.");
+    public PlayCommand() {
+        super("play", CommandCategory.MUSIC, MusicDashboard.class, "Loads music from the given url.");
     }
 
     @Override
