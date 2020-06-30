@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@Service(value = "discord-reaction", depends = {DiscordBot.class, EventService.class})
+@Service(id = "discord-reaction", depends = {DiscordBot.class, EventService.class})
 @Singleton
 @Slf4j
 public final class ReactionService {

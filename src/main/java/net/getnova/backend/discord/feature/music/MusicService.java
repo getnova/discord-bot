@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@Service(value = "discord-music", depends = {DiscordBot.class, CommandService.class, EventService.class, DashboardService.class, AudioService.class})
+@Service(id = "discord-music", depends = {DiscordBot.class, CommandService.class, EventService.class, DashboardService.class, AudioService.class})
 @Singleton
 @Slf4j
 public final class MusicService {

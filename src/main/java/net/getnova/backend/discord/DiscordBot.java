@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.security.auth.login.LoginException;
 
-@Service(value = "discord-bot", depends = ConfigService.class)
+@Service(id = "discord-bot", depends = ConfigService.class)
 @Singleton
 public class DiscordBot {
 

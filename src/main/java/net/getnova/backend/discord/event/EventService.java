@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Service(value = "discord-event", depends = DiscordBot.class)
+@Service(id = "discord-event", depends = DiscordBot.class)
 @Singleton
 public final class EventService {
 

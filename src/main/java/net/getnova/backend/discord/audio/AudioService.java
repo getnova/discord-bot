@@ -12,7 +12,7 @@ import net.getnova.backend.service.Service;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-@Service(value = "discord-audio", depends = {DiscordBot.class, EventService.class})
+@Service(id = "discord-audio", depends = {DiscordBot.class, EventService.class})
 @Singleton
 @Slf4j
 public final class AudioService {
