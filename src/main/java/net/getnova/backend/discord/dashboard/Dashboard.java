@@ -26,12 +26,11 @@ import java.util.stream.Collectors;
 public abstract class Dashboard {
 
     private final String id;
+    @Getter(AccessLevel.NONE)
+    private final Map<String, Consumer<GenericMessageReactionEvent>> reactionListeners;
     @Setter(AccessLevel.PACKAGE)
     private TextChannel channel;
     private Message message;
-    @Getter(AccessLevel.NONE)
-    private final Map<String, Consumer<GenericMessageReactionEvent>> reactionListeners;
-
     @Inject
     @Getter(AccessLevel.PROTECTED)
     private JDA jda;

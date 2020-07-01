@@ -94,9 +94,8 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
     }
 
     public boolean play() {
-        if (this.voiceChannel == null) throw new IllegalStateException("voice channel is unset");
-
         if (!this.queue.isEmpty()) {
+            if (this.voiceChannel == null) throw new IllegalStateException("voice channel is unset");
             if (!AudioUtils.isConnectedTo(this.voiceChannel)) AudioUtils.join(this.voiceChannel);
 
             if (this.isPaused()) {
@@ -105,14 +104,15 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
                 this.player.playTrack(track);
                 this.pausePosition = Long.MIN_VALUE;
             } else this.player.playTrack(this.queue.peek());
-        }
 
-        this.update.accept(this);
-        return true;
+            this.update.accept(this);
+            return true;
+
+        } else this.stop();
+        return false;
     }
 
     public void pause() {
-        if (this.isEmpty()) return;
         if (this.isPaused()) throw new IllegalStateException("already paused");
         if (this.voiceChannel == null) throw new IllegalStateException("voice channel is unset");
         this.pausePosition = this.player.getPlayingTrack().getPosition();
@@ -136,8 +136,7 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
      */
     public boolean skip(final int count) {
         for (int i = 0; i < count; i++) this.queue.poll();
-        if (!this.isPaused()) return this.play();
-        this.update.accept(this);
+        this.play();
         return !this.queue.isEmpty();
     }
 
@@ -146,9 +145,9 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
      * the current music playback.
      */
     public void stop() {
-        if (this.voiceChannel == null) throw new IllegalStateException("voice channel is unset");
         this.queue.clear();
-        AudioUtils.leave(this.voiceChannel.getGuild());
+        if (this.voiceChannel != null) AudioUtils.leave(this.voiceChannel.getGuild());
+        this.pausePosition = Long.MIN_VALUE;
         this.update.accept(this);
     }
 

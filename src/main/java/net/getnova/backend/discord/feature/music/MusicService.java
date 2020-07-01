@@ -67,7 +67,7 @@ public final class MusicService {
                     log.error("Error while updating the music dashboard.", e);
                 }
             }
-        }, 0, 15 * 1000);
+        }, 0, 10 * 1000);
     }
 
     public MusicPlayer getPlayer(final Guild guild) {
