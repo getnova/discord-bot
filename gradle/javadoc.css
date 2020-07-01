@@ -197,7 +197,7 @@ button {
 }
 
 .subNav::before {
-    content: 'Nova Backend Api Documentation';
+    content: 'Nova Discord Bot Api Documentation';
     margin-left: 20px;
     color: #253441;
     font-weight: bold;
