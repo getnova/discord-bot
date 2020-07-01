@@ -170,6 +170,7 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
     @Override
     public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) this.skip(1);
+        else this.stop();
     }
 
     @Override
