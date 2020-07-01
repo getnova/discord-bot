@@ -94,16 +94,18 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
     }
 
     public boolean play() {
-        if (this.queue.isEmpty()) return false;
         if (this.voiceChannel == null) throw new IllegalStateException("voice channel is unset");
-        if (!AudioUtils.isConnectedTo(this.voiceChannel)) AudioUtils.join(this.voiceChannel);
 
-        if (this.isPaused()) {
-            final AudioTrack track = this.queue.peek().makeClone();
-            track.setPosition(this.pausePosition);
-            this.player.playTrack(track);
-            this.pausePosition = Long.MIN_VALUE;
-        } else this.player.playTrack(this.queue.peek());
+        if (!this.queue.isEmpty()) {
+            if (!AudioUtils.isConnectedTo(this.voiceChannel)) AudioUtils.join(this.voiceChannel);
+
+            if (this.isPaused()) {
+                final AudioTrack track = this.queue.peek().makeClone();
+                track.setPosition(this.pausePosition);
+                this.player.playTrack(track);
+                this.pausePosition = Long.MIN_VALUE;
+            } else this.player.playTrack(this.queue.peek());
+        }
 
         this.update.accept(this);
         return true;
