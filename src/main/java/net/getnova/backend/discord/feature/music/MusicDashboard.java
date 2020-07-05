@@ -25,7 +25,7 @@ public final class MusicDashboard extends Dashboard {
         this.addReactionListener("play_or_pause_button", event -> {
             final MusicPlayer player = this.musicService.getPlayer(event.getGuild());
             if (player.isPaused()) player.play();
-            else player.pause();
+            else if (player.isPlaying()) player.pause();
         });
         this.addReactionListener("next_track_button", event -> this.musicService.getPlayer(event.getGuild()).skip(1));
         this.addReactionListener("stop_button", event -> this.musicService.getPlayer(event.getGuild()).stop());

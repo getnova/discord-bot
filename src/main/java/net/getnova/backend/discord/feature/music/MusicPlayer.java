@@ -115,6 +115,7 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
     public void pause() {
         if (this.isPaused()) throw new IllegalStateException("already paused");
         if (this.voiceChannel == null) throw new IllegalStateException("voice channel is unset");
+        if (!this.isPlaying()) throw new IllegalStateException("nothing is playing");
         this.pausePosition = this.player.getPlayingTrack().getPosition();
         this.player.playTrack(null);
         AudioUtils.leave(this.voiceChannel.getGuild());
@@ -170,7 +171,7 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
     @Override
     public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) this.skip(1);
-        else this.stop();
+        else if (!endReason.equals(AudioTrackEndReason.STOPPED)) this.stop();
     }
 
     @Override

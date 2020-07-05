@@ -63,7 +63,7 @@ public final class MessageUtils {
     }
 
     public static void delete(final TextChannel channel, final List<Message> messages) {
-        if (messages.size() == 1) messages.get(0).delete().queue();
+        if (messages.size() == 1) messages.get(0).delete().onErrorMap(o1 -> null).queue();
         else if (!messages.isEmpty()) {
             final Set<Message> missingMessages = new LinkedHashSet<>();
             final OffsetDateTime currentOffsetTowWeeks = OffsetDateTime.now().minusDays(12);
@@ -75,9 +75,11 @@ public final class MessageUtils {
                 } else return true;
             }).collect(Collectors.toUnmodifiableSet());
 
-            if (bulkDeleteMessages.size() > 1) channel.deleteMessages(bulkDeleteMessages).queue();
-            else if (!bulkDeleteMessages.isEmpty()) bulkDeleteMessages.iterator().next().delete().queue();
-            missingMessages.forEach(message -> message.delete().queue());
+            if (bulkDeleteMessages.size() > 1)
+                channel.deleteMessages(bulkDeleteMessages).onErrorMap(o1 -> null).queue();
+            else if (!bulkDeleteMessages.isEmpty())
+                bulkDeleteMessages.iterator().next().delete().onErrorMap(o1 -> null).queue();
+            missingMessages.forEach(message -> message.delete().onErrorMap(o1 -> null).queue());
         }
     }
 }
