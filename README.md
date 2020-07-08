@@ -40,3 +40,9 @@ Then you can open it with you IDE and start contributing.
 * [Gradle](https://gradle.org/) - The build tool
 * [JUnit](https://junit.org/) - The test tool
 
+## License
+
+| Licenses                                                                                                              |
+|-----------------------------------------------------------------------------------------------------------------------|
+| From 08.08.2020 [AGPL v3](LICENSE)                                                                                    |
+| Upto 07.08.2020 [MIT](https://github.com/getnova/discord-bot/blob/bae6598a095699e1e3ffae7b8d98d8e7c83247cf/LICENSE)   |

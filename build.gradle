@@ -15,9 +15,10 @@ sourceCompatibility = JavaVersion.VERSION_14
 targetCompatibility = JavaVersion.VERSION_14
 
 repositories {
-    maven {
-        url 'https://repo.rubidium.ml/repository/snapshots/'
-    }
+//    maven {
+//        url 'https://repo.rubidium.ml/repository/snapshots/'
+//    }
+    mavenLocal()
     mavenCentral()
     jcenter()
 }
