@@ -620,3 +620,4 @@ run
 lombok.config
 tmp
 /.idea/discord.xml
+/.idea/modules/discord-bot.iml

@@ -3,6 +3,7 @@ package net.getnova.backend.discord.feature.music;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.dashboard.Dashboard;
@@ -24,8 +25,11 @@ public final class MusicDashboard extends Dashboard {
 
         this.addReactionListener("play_or_pause_button", event -> {
             final MusicPlayer player = this.musicService.getPlayer(event.getGuild());
-            if (player.isPaused()) player.play();
-            else if (player.isPlaying()) player.pause();
+            if (player.isPaused()) {
+                final GuildVoiceState voiceState = event.getMember().getVoiceState();
+                if (voiceState == null) return;
+                player.play(voiceState.getChannel());
+            } else if (player.isPlaying()) player.pause();
         });
         this.addReactionListener("next_track_button", event -> this.musicService.getPlayer(event.getGuild()).skip(1));
         this.addReactionListener("stop_button", event -> this.musicService.getPlayer(event.getGuild()).stop());

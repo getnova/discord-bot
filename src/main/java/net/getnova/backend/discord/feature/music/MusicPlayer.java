@@ -93,6 +93,11 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
         return this.queue.peek();
     }
 
+    public boolean play(final VoiceChannel channel) {
+        this.voiceChannel = channel;
+        return play();
+    }
+
     public boolean play() {
         if (!this.queue.isEmpty()) {
             if (this.voiceChannel == null) throw new IllegalStateException("voice channel is unset");
@@ -171,7 +176,8 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
     @Override
     public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) this.skip(1);
-        else if (!(endReason.equals(AudioTrackEndReason.STOPPED) || endReason.equals(AudioTrackEndReason.REPLACED))) this.stop();
+        else if (!(endReason.equals(AudioTrackEndReason.STOPPED) || endReason.equals(AudioTrackEndReason.REPLACED)))
+            this.stop();
     }
 
     @Override
