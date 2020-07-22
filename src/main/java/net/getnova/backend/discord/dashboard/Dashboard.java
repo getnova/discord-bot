@@ -1,102 +1,59 @@
 package net.getnova.backend.discord.dashboard;
 
+import emoji4j.Emoji;
 import emoji4j.EmojiUtils;
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
-import net.getnova.backend.discord.MessageUtils;
-import net.getnova.backend.discord.reaction.ReactionEvent;
+import net.getnova.backend.discord.dashboard.channel.DashboardChannel;
+import net.getnova.backend.discord.dashboard.channel.reaction.DashboardReaction;
+import net.getnova.backend.discord.dashboard.channel.reaction.DashboardReactionEvent;
 import net.getnova.backend.discord.reaction.ReactionService;
 
-import javax.inject.Inject;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Data
+@EqualsAndHashCode
+@Getter(AccessLevel.NONE)
 public abstract class Dashboard {
 
+    @Getter
     private final String id;
-    @Getter(AccessLevel.NONE)
-    private final Map<String, Consumer<GenericMessageReactionEvent>> reactionListeners;
-    @Setter(AccessLevel.PACKAGE)
-    private TextChannel channel;
-    private Message message;
-    @Inject
-    @Getter(AccessLevel.PROTECTED)
+    private final List<DashboardReaction> reactions;
     private JDA jda;
+    @Getter
+    private Guild guild;
+    @Getter
+    private DashboardChannel channel;
 
-    @Inject
-    private ReactionService reactionService;
-
-    protected Dashboard(final String id) {
+    public Dashboard(final String id) {
         this.id = id;
-        this.reactionListeners = new LinkedHashMap<>();
+        this.reactions = new LinkedList<>();
     }
 
-    public final void update() {
-        /* Clear all old messages. Which is not the current in "this.message". */
-        final List<Message> messages = this.channel.getHistory().retrievePast(50).complete().stream().filter(message -> {
-            final boolean messagePresent = this.message != null;
-            if (!messagePresent && message.getAuthor().equals(this.jda.getSelfUser())) {
-                this.message = message;
-                return false;
-            }
-            return !messagePresent || !this.message.equals(message);
-        }).collect(Collectors.toUnmodifiableList());
-
-        messages.forEach(message -> {
-            if (this.reactionService.hasReactionListener(message)) this.reactionService.removeReactionListener(message);
-        });
-        MessageUtils.delete(this.channel, messages);
-
-        /* Create/update the old message. */
-        if (this.message == null) this.channel.sendMessage(this.generate()).queue(message -> {
-            this.message = message;
-            this.updateReactions();
-            this.reactionService.addReactionListener(this.message, this::handleReaction);
-        });
-        else {
-            if (!this.reactionService.hasReactionListener(this.message))
-                this.reactionService.addReactionListener(this.message, this::handleReaction);
-            this.message.editMessage(this.generate()).queue();
-            this.updateReactions();
-        }
+    protected void addReaction(final String emote, final Function<DashboardReactionEvent, Boolean> checkAccess, final Consumer<DashboardReactionEvent> callback) {
+        final Emoji emoji = EmojiUtils.getEmoji(emote);
+        if (emoji == null) throw new IllegalArgumentException("Emoji \"" + emote + "\" could not be found.");
+        this.reactions.add(new DashboardReaction(emoji, checkAccess, callback));
     }
 
-    private void handleReaction(final ReactionEvent event) {
-        Consumer<GenericMessageReactionEvent> consumer;
-        for (final String emoji : event.getEmojis()) {
-            consumer = this.reactionListeners.get(emoji);
-            if (consumer != null) consumer.accept(event.getReactionEvent());
-        }
+    public void render() {
+        this.channel.renderDashboard(this.update(), this.reactions);
     }
 
-    private void updateReactions() {
-        this.reactionListeners.forEach((emoji, consumer) -> this.message.addReaction(EmojiUtils.getEmoji(emoji).getEmoji()).queue());
-    }
+    protected abstract MessageEmbed update();
 
-    /**
-     * Generated a new {@link MessageEmbed} witch should be displayed as the dashboard.
-     *
-     * @return the {@link MessageEmbed}
-     */
-    protected abstract MessageEmbed generate();
-
-    public final Guild getGuild() {
-        return this.channel.getGuild();
-    }
-
-    protected final void addReactionListener(final String emoji, final Consumer<GenericMessageReactionEvent> listener) {
-        this.reactionListeners.put(emoji, listener);
+    void init(final ReactionService reactionService, final TextChannel channel) {
+        this.jda = channel.getJDA();
+        this.guild = channel.getGuild();
+        this.channel = new DashboardChannel(reactionService, channel,
+                this.reactions.stream().collect(Collectors.toMap(DashboardReaction::getEmoji, Function.identity())));
     }
 }

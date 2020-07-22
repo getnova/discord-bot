@@ -23,7 +23,7 @@ public final class MusicDashboard extends Dashboard {
     public MusicDashboard() {
         super("music");
 
-        this.addReactionListener("play_or_pause_button", event -> {
+        this.addReaction("play_or_pause_button", event -> true, event -> {
             final MusicPlayer player = this.musicService.getPlayer(event.getGuild());
             if (player.isPaused()) {
                 final GuildVoiceState voiceState = event.getMember().getVoiceState();
@@ -31,20 +31,20 @@ public final class MusicDashboard extends Dashboard {
                 player.play(voiceState.getChannel());
             } else if (player.isPlaying()) player.pause();
         });
-        this.addReactionListener("next_track_button", event -> this.musicService.getPlayer(event.getGuild()).skip(1));
-        this.addReactionListener("stop_button", event -> this.musicService.getPlayer(event.getGuild()).stop());
-        this.addReactionListener("arrow_up", event -> {
+        this.addReaction("next_track_button", event -> true, event -> this.musicService.getPlayer(event.getGuild()).skip(1));
+        this.addReaction("stop_button", event -> true, event -> this.musicService.getPlayer(event.getGuild()).stop());
+        this.addReaction("arrow_up", event -> true, event -> {
             if (this.offset > 0) this.offset -= PAGE_SIZE;
             this.update();
         });
-        this.addReactionListener("arrow_down", event -> {
+        this.addReaction("arrow_down", event -> true, event -> {
             if (this.offset < this.musicService.getPlayer(this.getGuild()).size() - PAGE_SIZE) this.offset += PAGE_SIZE;
             this.update();
         });
     }
 
     @Override
-    public MessageEmbed generate() {
+    public MessageEmbed update() {
         final MusicPlayer player = this.musicService.getPlayer(this.getGuild());
         return player.isEmpty() ? this.nothingPlaying() : playlist(player);
     }

@@ -3,8 +3,10 @@ package net.getnova.backend.discord;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.getnova.backend.Nova;
 import net.getnova.backend.config.ConfigService;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
@@ -25,6 +27,9 @@ public class DiscordBot {
     private JDA jda;
 
     @Inject
+    private Nova nova;
+
+    @Inject
     public DiscordBot(final ConfigService configService) {
         this.config = configService.addConfig("discord-bot", new DiscordBotConfig());
     }
@@ -35,6 +40,7 @@ public class DiscordBot {
                 .setAutoReconnect(true)
                 .setRequestTimeoutRetry(true)
                 .setActivity(Activity.watching("people" + this.config.getPrefix()))
+                .setStatus(this.nova.isDebug() ? OnlineStatus.DO_NOT_DISTURB : OnlineStatus.ONLINE)
                 .build();
         event.getBinder().bind(JDA.class).toInstance(this.jda);
         try {

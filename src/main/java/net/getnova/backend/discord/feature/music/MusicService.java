@@ -62,19 +62,19 @@ public final class MusicService {
             @Override
             public void run() {
                 try {
-                    dashboardService.getDashboards(MusicDashboard.class).forEach(Dashboard::update);
+                    dashboardService.getDashboards(MusicDashboard.class).forEach(Dashboard::render);
                 } catch (Exception e) {
                     log.error("Error while updating the music dashboard.", e);
                 }
             }
-        }, 0, 10 * 1000);
+        }, 10 * 1000, 10 * 1000);
     }
 
     public MusicPlayer getPlayer(final Guild guild) {
         MusicPlayer player = this.players.get(guild.getIdLong());
 
         if (player == null) {
-            player = new MusicPlayer(this.audioService.getPlayerManager(), currentPayer -> this.dashboardService.getDashboard(guild, MusicDashboard.class).update());
+            player = new MusicPlayer(this.audioService.getPlayerManager(), currentPayer -> this.dashboardService.getDashboard(guild, MusicDashboard.class).render());
             this.players.put(guild.getIdLong(), player);
         }
 

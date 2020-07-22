@@ -31,8 +31,12 @@ public final class DashboardService {
 
     @Inject
     private Nova nova;
+
     @Inject
     private InjectionHandler injectionHandler;
+
+    @Inject
+    private ReactionService reactionService;
 
     public DashboardService() {
         this.dashboardTypes = new LinkedHashSet<>();
@@ -49,7 +53,7 @@ public final class DashboardService {
                 dashboard = this.injectionHandler.getInjector().getInstance(dashboardType);
                 channels = guild.getTextChannelsByName(this.nova.isDebug() ? dashboard.getId() + "-debug" : dashboard.getId(), false);
                 if (!channels.isEmpty()) {
-                    dashboard.setChannel(channels.get(0));
+                    dashboard.init(this.reactionService, channels.get(0));
                     this.dashboards.add(dashboard);
                 }
             }
@@ -58,7 +62,7 @@ public final class DashboardService {
 
     @StartService
     private void start(final StartServiceEvent event) {
-        this.dashboards.forEach(Dashboard::update);
+        this.dashboards.forEach(Dashboard::render);
     }
 
     public void addDashboard(final Class<? extends Dashboard> dashboard) {

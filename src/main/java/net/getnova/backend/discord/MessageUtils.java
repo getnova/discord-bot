@@ -1,7 +1,5 @@
 package net.getnova.backend.discord;
 
-import emoji4j.Emoji;
-import emoji4j.EmojiUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -55,11 +53,6 @@ public final class MessageUtils {
             if (senderMessage != null) senderMessage.delete().onErrorMap(o1 -> null).queue();
             message.delete().onErrorMap(o1 -> null).queue();
         });
-    }
-
-    public static List<String> getEmojiName(final String emojiValue) {
-        final Emoji emoji = EmojiUtils.getEmoji(emojiValue);
-        return emoji == null ? List.of(emojiValue) : emoji.getAliases();
     }
 
     public static void delete(final TextChannel channel, final List<Message> messages) {

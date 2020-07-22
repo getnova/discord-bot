@@ -41,7 +41,7 @@ final class CommandEvent extends ListenerAdapter {
                     return;
                 }
 
-                if (!dashboard.getChannel().equals(event.getChannel())) {
+                if (!dashboard.getChannel().getChannel().equals(event.getChannel())) {
                     MessageUtils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `"
                             + input[0] + "`is not for this channel, try it in #" + dashboard.getId() + ".")));
                     return;
