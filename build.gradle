@@ -19,7 +19,6 @@ repositories {
         url 'https://repo.rubidium.ml/repository/snapshots/'
     }
 //    mavenLocal()
-    mavenCentral()
     jcenter()
 }
 
