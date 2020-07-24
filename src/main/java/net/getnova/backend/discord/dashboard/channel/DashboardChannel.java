@@ -6,16 +6,13 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
 import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.dashboard.channel.reaction.DashboardReaction;
 import net.getnova.backend.discord.dashboard.channel.reaction.DashboardReactionEvent;
 import net.getnova.backend.discord.reaction.ReactionService;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,50 +34,57 @@ public class DashboardChannel {
             this.channel.sendMessage(embed).queue(message -> this.postRenderDashboard(message, reactions));
         } else if (!this.message.getEmbeds().get(0).equals(embed)) {
             this.message.editMessage(embed).queue(message -> this.postRenderDashboard(message, reactions));
+        } else {
+            this.postRenderDashboard(this.message, reactions);
         }
     }
 
     private void postRenderDashboard(final Message message, final List<DashboardReaction> reactions) {
         this.message = message;
-        this.reactionService.addReactionListener(this.message, this::handleReaction);
-        this.updateReactions(reactions.stream().map(DashboardReaction::getEmoji).collect(Collectors.toUnmodifiableList()));
+        this.reactionService.addReactionListener(message, this::handleReaction);
+        this.updateReactions(message, reactions.stream().map(DashboardReaction::getEmoji).collect(Collectors.toUnmodifiableList()));
     }
 
     private void handleReaction(final GenericMessageReactionEvent event) {
         final DashboardReactionEvent reactionEvent = new DashboardReactionEvent(event.getMember(), event.getGuild(), EmojiUtils.getEmoji(event.getReactionEmote().getName()));
-        this.reactions.get(reactionEvent.getEmoji()).getCallback().accept(reactionEvent);
+        final DashboardReaction dashboardReaction = this.reactions.get(reactionEvent.getEmoji());
+        if (dashboardReaction != null) dashboardReaction.getCallback().accept(reactionEvent);
     }
 
-    private void updateReactions(final List<Emoji> emotes) {
-        this.updateRemainingReactions(emotes);
+    private void updateReactions(final Message message, final List<Emoji> emotes) {
+        this.updateRemainingReactions(message, emotes);
     }
 
-    private void updateRemainingReactions(final List<Emoji> emotes) {
+    private void updateRemainingReactions(final Message message, final List<Emoji> emotes) {
         if (!emotes.isEmpty()) {
-            this.message.addReaction(emotes.get(0).getEmoji()).queue(ignored -> this.updateRemainingReactions(emotes.subList(1, emotes.size())));
+            message.addReaction(emotes.get(0).getEmoji())
+                    .queue(ignored -> this.updateRemainingReactions(message, emotes.subList(1, emotes.size())));
         }
     }
 
     private void clean() {
-        final List<Message> messages = new LinkedList<>();
-        final SelfUser botUser = this.channel.getJDA().getSelfUser();
+        final long botUserId = this.channel.getJDA().getSelfUser().getIdLong();
+        final List<Message> history = this.channel.getHistory().retrievePast(50).complete();
 
-        final Message oldMessage = this.message;
-        this.message = null;
+        if (history.contains(this.message)) history.remove(this.message);
+        else {
+            final Message oldMessage = this.message;
+            this.message = null;
 
-        for (final Message message : this.channel.getHistory().retrievePast(50).complete()) {
-            final User author = message.getAuthor();
-            if (!author.equals(botUser) || !author.isBot()) messages.add(message);
-            else if (this.message == null && !message.getEmbeds().isEmpty()) this.message = message;
-            else messages.add(message);
+            history.removeIf(message -> {
+                if (this.message == null && message.getAuthor().getIdLong() == botUserId) {
+                    this.message = message;
+                    return true;
+                }
+                return false;
+            });
+
+            if (this.message == null || this.message != oldMessage) {
+                if (oldMessage != null) this.reactionService.removeReactionListener(oldMessage);
+                this.reactionListener = false;
+            }
         }
 
-        if (this.message == null || this.message != oldMessage) {
-            if (oldMessage != null) this.reactionService.removeReactionListener(oldMessage);
-            this.reactionListener = false;
-        }
-
-        log.info(messages.toString());
-        MessageUtils.delete(this.channel, messages);
+        MessageUtils.delete(this.channel, history);
     }
 }

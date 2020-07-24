@@ -5,6 +5,7 @@ import emoji4j.EmojiUtils;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -20,6 +21,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @EqualsAndHashCode
 @Getter(AccessLevel.NONE)
 public abstract class Dashboard {

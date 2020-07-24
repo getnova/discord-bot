@@ -5,8 +5,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.getnova.backend.discord.MessageUtils;
+import net.getnova.backend.discord.audio.AudioUtils;
 import net.getnova.backend.discord.dashboard.Dashboard;
+import net.getnova.backend.discord.dashboard.channel.reaction.DashboardReactionEvent;
 
 import javax.inject.Inject;
 import java.time.Duration;
@@ -22,25 +25,45 @@ public final class MusicDashboard extends Dashboard {
 
     public MusicDashboard() {
         super("music");
+        this.addReaction("play_or_pause_button", this::checkChannel, this::playOrePause);
+        this.addReaction("next_track_button", this::checkChannel, this::skip);
+        this.addReaction("stop_button", this::checkChannel, this::stop);
+        this.addReaction("arrow_up", this::checkChannel, this::scrollUp);
+        this.addReaction("arrow_down", this::checkChannel, this::scrollDown);
+    }
 
-        this.addReaction("play_or_pause_button", event -> true, event -> {
-            final MusicPlayer player = this.musicService.getPlayer(event.getGuild());
-            if (player.isPaused()) {
-                final GuildVoiceState voiceState = event.getMember().getVoiceState();
-                if (voiceState == null) return;
-                player.play(voiceState.getChannel());
-            } else if (player.isPlaying()) player.pause();
-        });
-        this.addReaction("next_track_button", event -> true, event -> this.musicService.getPlayer(event.getGuild()).skip(1));
-        this.addReaction("stop_button", event -> true, event -> this.musicService.getPlayer(event.getGuild()).stop());
-        this.addReaction("arrow_up", event -> true, event -> {
-            if (this.offset > 0) this.offset -= PAGE_SIZE;
-            this.update();
-        });
-        this.addReaction("arrow_down", event -> true, event -> {
-            if (this.offset < this.musicService.getPlayer(this.getGuild()).size() - PAGE_SIZE) this.offset += PAGE_SIZE;
-            this.update();
-        });
+    private boolean checkChannel(final DashboardReactionEvent event) {
+        final GuildVoiceState voiceState = event.getMember().getVoiceState();
+        if (voiceState == null) return false;
+        final VoiceChannel channel = voiceState.getChannel();
+        return channel != null && AudioUtils.isConnectedTo(channel);
+    }
+
+    private void playOrePause(final DashboardReactionEvent event) {
+        final MusicPlayer player = this.musicService.getPlayer(event.getGuild());
+        if (player.isPaused()) {
+            final GuildVoiceState voiceState = event.getMember().getVoiceState();
+            if (voiceState == null) return;
+            player.play(voiceState.getChannel());
+        } else if (player.isPlaying()) player.pause();
+    }
+
+    public void stop(final DashboardReactionEvent event) {
+        this.musicService.getPlayer(event.getGuild()).stop();
+    }
+
+    private void skip(final DashboardReactionEvent event) {
+        this.musicService.getPlayer(event.getGuild()).skip(1);
+    }
+
+    private void scrollUp(final DashboardReactionEvent event) {
+        if (this.offset > 0) this.offset -= PAGE_SIZE;
+        this.render();
+    }
+
+    private void scrollDown(final DashboardReactionEvent event) {
+        if (this.offset < this.musicService.getPlayer(this.getGuild()).size() - PAGE_SIZE) this.offset += PAGE_SIZE;
+        this.render();
     }
 
     @Override
@@ -71,6 +94,7 @@ public final class MusicDashboard extends Dashboard {
 
         final int size = Math.min(queue.size(), this.offset + PAGE_SIZE);
         final AudioTrack[] audioTracks = queue.toArray(new AudioTrack[0]);
+
         for (int i = this.offset; i < size; i++) {
             final AudioTrackInfo info = audioTracks[i].getInfo();
             embedBuilder.addField(info.author, "**" + (i + 1) + ". [" + info.title + "](" + info.uri + ")** ("
