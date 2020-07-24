@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Slf4j
-public class DashboardChannel {
+public final class DashboardChannel {
 
     private final ReactionService reactionService;
     private final TextChannel channel;

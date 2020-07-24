@@ -40,19 +40,19 @@ public abstract class Dashboard {
         this.reactions = new LinkedList<>();
     }
 
-    protected void addReaction(final String emote, final Function<DashboardReactionEvent, Boolean> checkAccess, final Consumer<DashboardReactionEvent> callback) {
+    protected final void addReaction(final String emote, final Function<DashboardReactionEvent, Boolean> checkAccess, final Consumer<DashboardReactionEvent> callback) {
         final Emoji emoji = EmojiUtils.getEmoji(emote);
         if (emoji == null) throw new IllegalArgumentException("Emoji \"" + emote + "\" could not be found.");
         this.reactions.add(new DashboardReaction(emoji, checkAccess, callback));
     }
 
-    public void render() {
+    public final void render() {
         this.channel.renderDashboard(this.update(), this.reactions);
     }
 
     protected abstract MessageEmbed update();
 
-    void init(final ReactionService reactionService, final TextChannel channel) {
+    final void init(final ReactionService reactionService, final TextChannel channel) {
         this.jda = channel.getJDA();
         this.guild = channel.getGuild();
         this.channel = new DashboardChannel(reactionService, channel,
