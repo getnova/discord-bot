@@ -32,6 +32,9 @@ public final class DashboardChannel {
         this.clean();
         if (this.message == null) {
             this.channel.sendMessage(embed).queue(message -> this.postRenderDashboard(message, reactions));
+        } else if (this.message.getEmbeds().size() == 0) {
+            this.message.delete().queue();
+            this.channel.sendMessage(embed).queue(message -> this.postRenderDashboard(message, reactions));
         } else if (!this.message.getEmbeds().get(0).equals(embed)) {
             this.message.editMessage(embed).queue(message -> this.postRenderDashboard(message, reactions));
         } else {
