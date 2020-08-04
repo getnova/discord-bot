@@ -33,7 +33,7 @@ dependencies {
     implementation 'net.getnova.backend:nova-logging:edge'
     implementation 'net.getnova.backend:nova-service:edge'
     implementation 'net.getnova.backend:nova-injection:edge'
-    implementation 'net.getnova.backend:nova-config:edge'
+    implementation 'net.getnova.backend:nova-config:edge_14'
     implementation 'net.getnova.backend:nova-bootstrap-api:edge'
     runtimeOnly 'net.getnova.backend:nova-bootstrap:edge'
 }
