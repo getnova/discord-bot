@@ -14,11 +14,14 @@ version version.toString().startsWith('v') ? version.toString().substring(1) : v
 sourceCompatibility = JavaVersion.VERSION_14
 targetCompatibility = JavaVersion.VERSION_14
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 repositories {
     maven {
-        url 'https://repo.rubidium.ml/repository/snapshots/'
+        url "https://dl.bintray.com/getnova/maven"
     }
-//    mavenLocal()
     jcenter()
 }
 
@@ -90,4 +93,3 @@ javadoc {
     }
     finalizedBy copyJavaDocStyles
 }
-
