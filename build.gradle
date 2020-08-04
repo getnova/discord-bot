@@ -35,7 +35,7 @@ dependencies {
     implementation 'net.getnova.backend:nova-injection:edge'
     implementation 'net.getnova.backend:nova-config:edge'
     implementation 'net.getnova.backend:nova-bootstrap-api:edge'
-    runtimeOnly 'net.getnova.backend:nova-bootstrap:edge'
+    runtimeOnly 'net.getnova.backend:nova-bootstrap:edge_14'
 }
 
 jar {
