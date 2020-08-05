@@ -8,7 +8,7 @@ plugins {
     id 'jacoco'
 }
 
-group 'net.getnova.backend'
+group 'net.getnova.backend.module'
 version version.toString().startsWith('v') ? version.toString().substring(1) : version
 
 sourceCompatibility = JavaVersion.VERSION_14

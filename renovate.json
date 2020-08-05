@@ -10,5 +10,13 @@
     "JannikEmmerich"
   ],
   "branchName": "{{{branchPrefix}}}{{{managerBranchPrefix}}}{{{branchTopic}}}",
-  "branchPrefix": "dependencies/"
+  "branchPrefix": "dependencies/",
+  "packageRules": [
+    {
+      "packagePatterns": [
+        "^net.getnova.backend:"
+      ],
+      "groupName": "Nova Backend"
+    }
+  ]
 }
