@@ -15,14 +15,14 @@ import java.util.Set;
 
 @Service(id = "discord-event", depends = DiscordBot.class)
 @Singleton
-public final class EventService {
+public final class DiscordEventService {
 
     private final Set<Class<? extends ListenerAdapter>> listeners;
 
     @Inject
     private InjectionHandler injectionHandler;
 
-    public EventService() {
+    public DiscordEventService() {
         this.listeners = new LinkedHashSet<>();
     }
 

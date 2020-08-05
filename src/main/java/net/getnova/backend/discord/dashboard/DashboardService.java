@@ -13,6 +13,7 @@ import net.getnova.backend.service.event.PostInitService;
 import net.getnova.backend.service.event.PostInitServiceEvent;
 import net.getnova.backend.service.event.StartService;
 import net.getnova.backend.service.event.StartServiceEvent;
+import net.getnova.backend.sql.SqlService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service(id = "discord-dashboard", depends = {DiscordBot.class, ReactionService.class})
+@Service(id = "discord-dashboard", depends = {DiscordBot.class, SqlService.class, ReactionService.class})
 @Singleton
 @Slf4j
 public final class DashboardService {
@@ -31,6 +32,9 @@ public final class DashboardService {
 
     @Inject
     private Nova nova;
+
+    @Inject
+    private SqlService sqlService;
 
     @Inject
     private InjectionHandler injectionHandler;

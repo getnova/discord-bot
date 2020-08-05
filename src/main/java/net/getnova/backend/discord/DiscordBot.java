@@ -24,6 +24,8 @@ public class DiscordBot {
 
     @Getter
     private final DiscordBotConfig config;
+
+    @Getter
     private JDA jda;
 
     @Inject

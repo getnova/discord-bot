@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
-import net.getnova.backend.discord.command.CommandService;
+import net.getnova.backend.discord.command.DiscordCommandService;
 
 import javax.inject.Inject;
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public final class HelpCommand extends Command {
 
     @Inject
-    private CommandService commandService;
+    private DiscordCommandService commandService;
 
     public HelpCommand() {
         super("help", CommandCategory.GENERAL, "Shows this message.");

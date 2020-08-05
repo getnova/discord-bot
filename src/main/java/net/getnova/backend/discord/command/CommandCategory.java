@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum CommandCategory {
 
     GENERAL("General"),
+    ADMIN("Admin"),
     MUSIC("Music");
 
     private final String name;

@@ -5,10 +5,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.audio.AudioPlayerSendHandler;
 import net.getnova.backend.discord.audio.AudioService;
-import net.getnova.backend.discord.command.CommandService;
+import net.getnova.backend.discord.command.DiscordCommandService;
 import net.getnova.backend.discord.dashboard.Dashboard;
 import net.getnova.backend.discord.dashboard.DashboardService;
-import net.getnova.backend.discord.event.EventService;
+import net.getnova.backend.discord.event.DiscordEventService;
 import net.getnova.backend.discord.feature.music.commands.PlayCommand;
 import net.getnova.backend.discord.feature.music.commands.SearchCommand;
 import net.getnova.backend.discord.feature.music.commands.SkipCommand;
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@Service(id = "discord-music", depends = {DiscordBot.class, CommandService.class, EventService.class, DashboardService.class, AudioService.class})
+@Service(id = "discord-music", depends = {DiscordBot.class, DiscordCommandService.class, DiscordEventService.class, DashboardService.class, AudioService.class})
 @Singleton
 @Slf4j
 public final class MusicService {
@@ -34,9 +34,9 @@ public final class MusicService {
     private final Map<Long, MusicPlayer> players;
 
     @Inject
-    private CommandService commandService;
+    private DiscordCommandService commandService;
     @Inject
-    private EventService eventService;
+    private DiscordEventService discordEventService;
     @Inject
     private DashboardService dashboardService;
     @Inject
@@ -52,7 +52,7 @@ public final class MusicService {
         this.commandService.addCommand(new PlayCommand());
         this.commandService.addCommand(new SearchCommand());
         this.commandService.addCommand(new SkipCommand());
-        this.eventService.addListener(MusicEvent.class);
+        this.discordEventService.addListener(MusicEvent.class);
         this.dashboardService.addDashboard(MusicDashboard.class);
     }
 

@@ -13,9 +13,11 @@ import java.util.Arrays;
 final class CommandEvent extends ListenerAdapter {
 
     @Inject
-    private CommandService commandService;
+    private DiscordCommandService commandService;
+
     @Inject
     private DashboardService dashboardService;
+
     @Inject
     private DiscordBot discordBot;
 
