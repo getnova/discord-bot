@@ -15,7 +15,7 @@ final class ConfigListener extends ListenerAdapter {
     private SqlService sqlService;
 
     @Override
-    public void onGuildLeave(@NotNull GuildLeaveEvent event) {
+    public void onGuildLeave(@NotNull final GuildLeaveEvent event) {
         try (Session session = this.sqlService.openSession()) {
             final Transaction transaction = session.beginTransaction();
 

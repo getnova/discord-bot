@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.getnova.backend.Nova;
 import net.getnova.backend.discord.DiscordBot;
+import net.getnova.backend.discord.config.DiscordConfigService;
 import net.getnova.backend.discord.reaction.ReactionService;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
@@ -13,7 +14,6 @@ import net.getnova.backend.service.event.PostInitService;
 import net.getnova.backend.service.event.PostInitServiceEvent;
 import net.getnova.backend.service.event.StartService;
 import net.getnova.backend.service.event.StartServiceEvent;
-import net.getnova.backend.sql.SqlService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service(id = "discord-dashboard", depends = {DiscordBot.class, SqlService.class, ReactionService.class})
+@Service(id = "discord-dashboard", depends = {DiscordBot.class, ReactionService.class, DiscordConfigService.class})
 @Singleton
 @Slf4j
 public final class DashboardService {
@@ -34,13 +34,13 @@ public final class DashboardService {
     private Nova nova;
 
     @Inject
-    private SqlService sqlService;
-
-    @Inject
     private InjectionHandler injectionHandler;
 
     @Inject
     private ReactionService reactionService;
+
+    @Inject
+    private DiscordConfigService configService;
 
     public DashboardService() {
         this.dashboardTypes = new LinkedHashSet<>();
@@ -49,6 +49,8 @@ public final class DashboardService {
 
     @PostInitService
     private void postInit(final PostInitServiceEvent event) {
+        this.configService.addKey("test", "this is a test", "123", (guild, value) -> log.info(guild.getName() + ": " + value));
+
         for (final Guild guild : this.injectionHandler.getInjector().getInstance(JDA.class).getGuilds()) {
             Dashboard dashboard;
             List<TextChannel> channels;

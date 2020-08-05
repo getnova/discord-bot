@@ -26,7 +26,7 @@ final class ConfigValue extends TableModel {
     @Column(name = "value", nullable = false, updatable = true, length = 512)
     private String value;
 
-    public ConfigValue(final Guild guild, final String key, final String value) {
+    ConfigValue(final Guild guild, final String key, final String value) {
         this.key = new Key(guild.getIdLong(), key);
         this.value = value;
     }

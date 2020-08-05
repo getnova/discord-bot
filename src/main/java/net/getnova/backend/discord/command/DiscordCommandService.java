@@ -5,7 +5,6 @@ import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.command.general.EmojiCommand;
 import net.getnova.backend.discord.command.general.HelpCommand;
 import net.getnova.backend.discord.command.general.PingCommand;
-import net.getnova.backend.discord.dashboard.DashboardService;
 import net.getnova.backend.discord.event.DiscordEventService;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
@@ -17,7 +16,7 @@ import javax.inject.Singleton;
 import java.util.LinkedList;
 import java.util.List;
 
-@Service(id = "discord-command", depends = {DiscordBot.class, DashboardService.class, DiscordEventService.class})
+@Service(id = "discord-command", depends = {DiscordBot.class, DiscordEventService.class})
 @Singleton
 public final class DiscordCommandService {
 

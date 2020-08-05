@@ -81,8 +81,11 @@ public final class DiscordConfigService {
                     this.callback.call(guild, value);
 
                     final ConfigValue configValue = session.find(ConfigValue.class, configKey);
-                    configValue.setValue(value);
-                    session.update(configValue);
+                    if (configValue == null) session.save(new ConfigValue(guild, key, value));
+                    else {
+                        configValue.setValue(value);
+                        session.update(configValue);
+                    }
                 }
                 transaction.commit();
             }

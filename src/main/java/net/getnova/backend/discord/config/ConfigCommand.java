@@ -22,7 +22,7 @@ final class ConfigCommand extends Command {
     @Inject
     private DiscordConfigService configService;
 
-    public ConfigCommand() {
+    ConfigCommand() {
         super("config", CommandCategory.ADMIN, "Update config values. (list | reset <key> | set <key> <value>)");
     }
 
@@ -30,7 +30,7 @@ final class ConfigCommand extends Command {
     public void execute(final Message message, final String[] args) {
         if (args.length == 1 && args[0].equalsIgnoreCase("list")) this.list(message);
         else if (args.length == 2 && args[0].equalsIgnoreCase("reset")) this.reset(message, args[1]);
-        else if (args.length == 3 && args[1].equalsIgnoreCase("set")) this.set(message, args[1], args[2]);
+        else if (args.length == 3 && args[0].equalsIgnoreCase("set")) this.set(message, args[1], args[2]);
         else MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(INVALID_ARGUMENTS));
     }
 
@@ -64,7 +64,7 @@ final class ConfigCommand extends Command {
     private void set(final Message message, final String key, final String value) {
         if (this.configService.setValue(message.getGuild(), key, value)) {
             MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(
-                    MessageUtils.createInfoEmbed("Value of `" + key + "` is `" + value + "`.")
+                    MessageUtils.createInfoEmbed("Value of `" + key + "` is now `" + value + "`.")
             ));
         } else {
             MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(
