@@ -5,12 +5,12 @@ on:
     # Publish `v1.2.3` tags as releases.
     tags:
       - v*
-    branches: [docker]
+    branches: [master]
     paths-ignore: ['**.md']
 
 env:
   IMAGE_NAME: getnova/discord-bot
-  DOCKER_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+  DOCKER_PLATFORMS: linux/amd64,linux/arm/v7
 
 jobs:
   check:
