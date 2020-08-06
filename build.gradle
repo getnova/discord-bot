@@ -1,9 +1,9 @@
 plugins {
     id 'java'
-    id 'io.freefair.git-version' version '5.1.0'
-    id 'io.freefair.lombok' version '5.1.0'
-    id 'io.freefair.javadoc-utf-8' version '5.1.0'
-    id 'io.freefair.javadoc-links' version '5.1.0'
+    id 'io.freefair.git-version' version '5.1.1'
+    id 'io.freefair.lombok' version '5.1.1'
+    id 'io.freefair.javadoc-utf-8' version '5.1.1'
+    id 'io.freefair.javadoc-links' version '5.1.1'
     id 'checkstyle'
     id 'jacoco'
 }
@@ -11,8 +11,7 @@ plugins {
 group 'net.getnova.backend.module'
 version version.toString().startsWith('v') ? version.toString().substring(1) : version
 
-sourceCompatibility = JavaVersion.VERSION_14
-targetCompatibility = JavaVersion.VERSION_14
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -82,15 +81,8 @@ checkstyleTest {
     configFile = file("${checkstyleDir}/test.xml")
 }
 
-task copyJavaDocStyles(type: Copy) {
-    from "$rootDir/gradle/javadoc.css"
-    rename 'javadoc.css', 'stylesheet.css'
-    into "$buildDir/docs/javadoc/"
-}
-
 javadoc {
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
-    finalizedBy copyJavaDocStyles
 }
