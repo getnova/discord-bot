@@ -29,13 +29,13 @@ dependencies {
     compile 'com.sedmelluq:lavaplayer:1.3.50'
     compile 'com.kcthota:emoji4j:6.0'
 
-    implementation 'net.getnova.backend:nova-logging:edge_18'
-    implementation 'net.getnova.backend:nova-service:edge_18'
-    implementation 'net.getnova.backend:nova-injection:edge_18'
-    implementation 'net.getnova.backend:nova-config:edge_18'
-    implementation 'net.getnova.backend:nova-sql:edge_18'
-    implementation 'net.getnova.backend:nova-bootstrap-api:edge_18'
-    runtimeOnly 'net.getnova.backend:nova-bootstrap:edge_18'
+    implementation 'net.getnova.backend:nova-logging:edge_19'
+    implementation 'net.getnova.backend:nova-service:edge_19'
+    implementation 'net.getnova.backend:nova-injection:edge_19'
+    implementation 'net.getnova.backend:nova-config:edge_19'
+    implementation 'net.getnova.backend:nova-sql:edge_19'
+    implementation 'net.getnova.backend:nova-bootstrap-api:edge_19'
+    runtimeOnly 'net.getnova.backend:nova-bootstrap:edge_19'
 }
 
 jar {
