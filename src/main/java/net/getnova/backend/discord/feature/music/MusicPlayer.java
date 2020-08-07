@@ -138,6 +138,7 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
     /**
      * Removes the head of this queue, and plays the new head of the queue.
      *
+     * @param count the count how many track should be skipped
      * @return if the queue isn't empty, after the skipping
      */
     public boolean skip(final int count) {
