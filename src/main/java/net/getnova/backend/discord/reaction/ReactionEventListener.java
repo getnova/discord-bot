@@ -31,9 +31,7 @@ class ReactionEventListener extends ListenerAdapter {
         final User user = event.getUser();
         if (user != null && !user.isBot()) {
             final Consumer<GenericMessageReactionEvent> reactionEventConsumer = this.reactionService.getReactionCallbacks().get(event.getMessageIdLong());
-
-            if (reactionEventConsumer != null)
-                reactionEventConsumer.accept(event);
+            if (reactionEventConsumer != null) reactionEventConsumer.accept(event);
         }
     }
 }

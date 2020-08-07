@@ -11,7 +11,10 @@ import net.getnova.backend.sql.SqlService;
 import org.hibernate.Session;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.List;
 
+@Singleton
 final class ConfigCommand extends Command {
 
     private static final MessageEmbed INVALID_ARGUMENTS = MessageUtils.createErrorEmbed("Invalid Syntax: list | reset <key> | set <key> <value>");
@@ -20,10 +23,15 @@ final class ConfigCommand extends Command {
     private SqlService sqlService;
 
     @Inject
-    private DiscordConfigService configService;
+    private ConfigService configService;
 
     ConfigCommand() {
-        super("config", CommandCategory.ADMIN, "Update config values. (list | reset <key> | set <key> <value>)");
+        super("config", List.of("list", "reset <key>", "set <key> <value>"), CommandCategory.ADMIN, "Update config values.");
+    }
+
+    @Override
+    public boolean checkChannel(final Message message) {
+        return true;
     }
 
     @Override
@@ -51,25 +59,17 @@ final class ConfigCommand extends Command {
 
     private void reset(final Message message, final String key) {
         if (this.configService.setValue(message.getGuild(), key, null)) {
-            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(
-                    MessageUtils.createInfoEmbed("Value of `" + key + "` is now rested.")
-            ));
+            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createInfoEmbed("Value of `" + key + "` is now rested.")));
         } else {
-            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(
-                    MessageUtils.createErrorEmbed("Unable to find config value `" + key + "`.")
-            ));
+            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Unable to find config value `" + key + "`.")));
         }
     }
 
     private void set(final Message message, final String key, final String value) {
         if (this.configService.setValue(message.getGuild(), key, value)) {
-            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(
-                    MessageUtils.createInfoEmbed("Value of `" + key + "` is now `" + value + "`.")
-            ));
+            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createInfoEmbed("Value of `" + key + "` is now `" + value + "`.")));
         } else {
-            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(
-                    MessageUtils.createErrorEmbed("Unable to find config value `" + key + "`.")
-            ));
+            MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createErrorEmbed("Unable to find config value `" + key + "`.")));
         }
     }
 }

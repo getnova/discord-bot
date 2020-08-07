@@ -1,5 +1,6 @@
 package net.getnova.backend.discord.command;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.getnova.backend.discord.DiscordBot;
@@ -11,41 +12,28 @@ import java.util.Arrays;
 final class CommandEvent extends ListenerAdapter {
 
     @Inject
-    private DiscordCommandService commandService;
+    private CommandService commandService;
 
     @Inject
     private DiscordBot discordBot;
 
     @Override
     public void onGuildMessageReceived(final GuildMessageReceivedEvent event) {
-        final String message = event.getMessage().getContentRaw();
+        final Message message = event.getMessage();
+        final String messageContent = message.getContentRaw();
 
-        if (message.startsWith(this.discordBot.getConfig().getPrefix()) && !(event.getAuthor().isBot() || event.getAuthor().isFake())) {
-            final String[] input = this.parseInput(message);
+        if (!event.getAuthor().isBot() && messageContent.startsWith(this.discordBot.getConfig().getPrefix())) {
+            final String[] input = this.parseInput(messageContent);
             final Command command = this.commandService.getCommand(input[0]);
 
             if (command == null) {
-                MessageUtils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `" + input[0] + "` was not found.")));
+                MessageUtils.temporallyMessage(message, event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `" + input[0] + "` was not found.")));
                 return;
             }
 
-//            final Class<? extends Dashboard> dashboardType = command.getDashboardType();
-//            if (dashboardType != null) {
-//                final Dashboard dashboard = this.dashboardService.getDashboard(event.getGuild(), dashboardType);
-//                if (dashboard == null) {
-//                    MessageUtils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `"
-//                            + input[0] + "` is not configures for this server, create a text channel with the name of this module.")));
-//                    return;
-//                }
-//
-//                if (!dashboard.getChannel().getChannel().equals(event.getChannel())) {
-//                    MessageUtils.temporallyMessage(event.getMessage(), event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `"
-//                            + input[0] + "`is not for this channel, try it in #" + dashboard.getId() + ".")));
-//                    return;
-//                }
-//            }
-
-            command.execute(event.getMessage(), Arrays.copyOfRange(input, 1, input.length));
+            if (command.checkChannel(message)) {
+                command.execute(message, Arrays.copyOfRange(input, 1, input.length));
+            }
         }
     }
 

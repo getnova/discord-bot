@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Guild;
 import net.getnova.backend.discord.DiscordBot;
-import net.getnova.backend.discord.command.DiscordCommandService;
-import net.getnova.backend.discord.event.DiscordEventService;
+import net.getnova.backend.discord.command.CommandService;
+import net.getnova.backend.discord.event.EventService;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
@@ -19,9 +19,9 @@ import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service(id = "discord-config", depends = {DiscordBot.class, SqlService.class, DiscordEventService.class, DiscordCommandService.class})
+@Service(id = "discord-config", depends = {DiscordBot.class, SqlService.class, EventService.class, CommandService.class})
 @Singleton
-public final class DiscordConfigService {
+public final class ConfigService {
 
     @Getter(AccessLevel.PACKAGE)
     private final Map<String, ConfigEntry> values;
@@ -30,12 +30,12 @@ public final class DiscordConfigService {
     private SqlService sqlService;
 
     @Inject
-    private DiscordEventService eventService;
+    private EventService eventService;
 
     @Inject
-    private DiscordCommandService commandService;
+    private CommandService commandService;
 
-    public DiscordConfigService() {
+    public ConfigService() {
         this.values = new HashMap<>();
     }
 
@@ -43,7 +43,7 @@ public final class DiscordConfigService {
     private void preInit(final PreInitServiceEvent event) {
         this.sqlService.addEntity(ConfigValue.class);
         this.eventService.addListener(ConfigListener.class);
-        this.commandService.addCommand(new ConfigCommand());
+        this.commandService.addCommand(ConfigCommand.class);
     }
 
     public void addKey(final String key, final String description, final String defaultValue, final ConfigCallback callback) {

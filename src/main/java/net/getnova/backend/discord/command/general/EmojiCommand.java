@@ -6,10 +6,19 @@ import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
 
+import javax.inject.Singleton;
+import java.util.List;
+
+@Singleton
 public final class EmojiCommand extends Command {
 
     public EmojiCommand() {
-        super("emoji", CommandCategory.GENERAL, "Prints the name of a emoji.");
+        super("emoji", List.of("<emoji>"), CommandCategory.GENERAL, "Prints the name of a emoji.");
+    }
+
+    @Override
+    public boolean checkChannel(final Message message) {
+        return true;
     }
 
     @Override

@@ -44,7 +44,7 @@ public final class DashboardChannel {
 
     private void postRenderDashboard(final Message message, final List<DashboardReaction> reactions) {
         this.message = message;
-        this.reactionService.addReactionListener(message, this::handleReaction);
+        this.reactionService.setReactionListener(message, this::handleReaction);
         this.updateReactions(message, reactions.stream().map(DashboardReaction::getEmoji).collect(Collectors.toUnmodifiableList()));
     }
 

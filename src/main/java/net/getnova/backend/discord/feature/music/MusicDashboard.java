@@ -75,7 +75,7 @@ public final class MusicDashboard extends Dashboard {
     private MessageEmbed nothingPlaying() {
         return MessageUtils.createEmbedBuilder()
                 .setTitle("Music :small_orange_diamond: No music playback")
-                .setDescription("Here you always see the state of the music that is currently being played.")
+                .setDescription("Here you can always see the state of the music that is currently being played.")
                 .addField("No music playback", ":x: No music is currently being played.", false)
                 .build();
     }
@@ -86,7 +86,7 @@ public final class MusicDashboard extends Dashboard {
 
         final EmbedBuilder embedBuilder = MessageUtils.createEmbedBuilder()
                 .setTitle("Music :small_orange_diamond: Playlist with " + queue.size() + " items")
-                .setDescription("Here you always see the state of the music that is currently being played.")
+                .setDescription("Here you can always see the state of the music that is currently being played.")
                 .addField("Progress" + (player.isPaused() ? " (paused)" : ""),
                         "\u25AC".repeat(Math.max(0, x - 1)) + ":white_circle:" + "\u25AC".repeat(Math.max(0, 19 - x))
                                 + " [" + MessageUtils.formatDuration(Duration.ofMillis(player.getPosition())) + "/"

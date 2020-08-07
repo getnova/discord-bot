@@ -98,7 +98,7 @@ public final class MusicPlayer extends AudioEventAdapter implements AudioLoadRes
         return play();
     }
 
-    public boolean play() {
+    private boolean play() {
         if (!this.queue.isEmpty()) {
             if (this.voiceChannel == null) throw new IllegalStateException("voice channel is unset");
             if (!AudioUtils.isConnectedTo(this.voiceChannel)) AudioUtils.join(this.voiceChannel);

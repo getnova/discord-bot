@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
 import net.getnova.backend.discord.DiscordBot;
-import net.getnova.backend.discord.event.DiscordEventService;
+import net.getnova.backend.discord.event.EventService;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@Service(id = "discord-reaction", depends = {DiscordBot.class, DiscordEventService.class})
+@Service(id = "discord-reaction", depends = {DiscordBot.class, EventService.class})
 @Singleton
 @Slf4j
 public final class ReactionService {
@@ -27,7 +27,7 @@ public final class ReactionService {
     private final Map<Long, Consumer<GenericMessageReactionEvent>> reactionCallbacks;
 
     @Inject
-    private DiscordEventService discordEventService;
+    private EventService eventService;
 
     public ReactionService() {
         this.reactionCallbacks = new HashMap<>();
@@ -35,14 +35,14 @@ public final class ReactionService {
 
     @PreInitService
     private void preInit(final PreInitServiceEvent event) {
-        this.discordEventService.addListener(ReactionEventListener.class);
+        this.eventService.addListener(ReactionEventListener.class);
     }
 
     public boolean hasReactionListener(@NotNull final Message message) {
         return this.reactionCallbacks.containsKey(message.getIdLong());
     }
 
-    public void addReactionListener(@NotNull final Message message, @NotNull final Consumer<GenericMessageReactionEvent> consumer) {
+    public void setReactionListener(@NotNull final Message message, @NotNull final Consumer<GenericMessageReactionEvent> consumer) {
         this.reactionCallbacks.put(message.getIdLong(), consumer);
     }
 
