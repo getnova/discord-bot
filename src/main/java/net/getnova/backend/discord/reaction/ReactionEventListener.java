@@ -16,6 +16,7 @@ class ReactionEventListener extends ListenerAdapter {
 
     @Inject
     private ReactionService reactionService;
+    private long next;
 
     @Override
     public void onMessageReactionAdd(@NotNull final MessageReactionAddEvent event) {
@@ -31,7 +32,11 @@ class ReactionEventListener extends ListenerAdapter {
         final User user = event.getUser();
         if (user != null && !user.isBot()) {
             final Consumer<GenericMessageReactionEvent> reactionEventConsumer = this.reactionService.getReactionCallbacks().get(event.getMessageIdLong());
-            if (reactionEventConsumer != null) reactionEventConsumer.accept(event);
+            final long now = System.currentTimeMillis();
+            if (reactionEventConsumer != null && this.next < now) {
+                reactionEventConsumer.accept(event);
+                this.next = now + 500;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package net.getnova.backend.discord.feature.music.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Message;
 import net.getnova.backend.discord.MessageUtils;
@@ -13,6 +14,7 @@ import net.getnova.backend.discord.feature.music.MusicService;
 import javax.inject.Inject;
 import java.util.List;
 
+@Slf4j
 public final class PlayCommand extends Command {
 
     @Inject
