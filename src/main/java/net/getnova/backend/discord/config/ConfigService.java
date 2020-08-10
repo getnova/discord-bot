@@ -46,8 +46,10 @@ public final class ConfigService {
         this.commandService.addCommand(ConfigCommand.class);
     }
 
-    public void addKey(final String key, final String description, final String defaultValue, final ConfigCallback callback) {
-        this.values.put(key, new ConfigEntry(this.sqlService, description, defaultValue, callback));
+    public ConfigEntry addKey(final String key, final String description, final String defaultValue, final ConfigCallback callback) {
+        final ConfigEntry entry = new ConfigEntry(this.sqlService, description, defaultValue, callback);
+        this.values.put(key, entry);
+        return entry;
     }
 
     public boolean setValue(final Guild guild, final String key, final String value) {
@@ -59,7 +61,7 @@ public final class ConfigService {
     }
 
     @Data
-    static class ConfigEntry {
+    public static final class ConfigEntry {
 
         private final SqlService sqlService;
         private final String description;

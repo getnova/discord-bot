@@ -1,5 +1,6 @@
 package net.getnova.backend.discord.command;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -28,6 +29,10 @@ final class CommandEvent extends ListenerAdapter {
 
             if (command == null) {
                 MessageUtils.temporallyMessage(message, event.getChannel().sendMessage(MessageUtils.createErrorEmbed("The command `" + input[0] + "` was not found.")));
+                return;
+            }
+
+            if (command.getCategory() == CommandCategory.ADMIN && !event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                 return;
             }
 

@@ -29,7 +29,7 @@ public final class DashboardChannel {
     private boolean reactionListener = false;
 
     public void renderDashboard(final MessageEmbed embed, final List<DashboardReaction> reactions) {
-        this.clean();
+        this.clean(false);
         if (this.message == null) {
             this.channel.sendMessage(embed).queue(message -> this.postRenderDashboard(message, reactions));
         } else if (this.message.getEmbeds().size() == 0) {
@@ -65,11 +65,11 @@ public final class DashboardChannel {
         }
     }
 
-    private void clean() {
+    public void clean(final boolean all) {
         final long botUserId = this.channel.getJDA().getSelfUser().getIdLong();
         final List<Message> history = this.channel.getHistory().retrievePast(50).complete();
 
-        if (history.contains(this.message)) history.remove(this.message);
+        if (!all) if (history.contains(this.message)) history.remove(this.message);
         else {
             final Message oldMessage = this.message;
             this.message = null;

@@ -46,14 +46,24 @@ final class ConfigCommand extends Command {
         final EmbedBuilder embedBuilder = MessageUtils.createEmbedBuilder();
         final Guild guild = message.getGuild();
 
-        embedBuilder.setTitle("Config Values");
+        final StringBuilder builder = new StringBuilder();
+        builder.append("```yaml")
+                .append("\n");
 
         try (Session session = this.sqlService.openSession()) {
-            this.configService.getValues().forEach((key, value) ->
-                    embedBuilder.addField(value.getDescription(), key + ": " + value.getValue(session, guild, key), false)
+            this.configService.getValues().forEach((key, value) -> {
+                        builder.append("# ")
+                                .append(value.getDescription())
+                                .append("\n")
+                                .append(key)
+                                .append(": ")
+                                .append(value.getValue(session, guild, key));
+                    }
             );
         }
+        builder.append("```");
 
+        embedBuilder.addField("Config Values", builder.toString(), false);
         MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(embedBuilder.build()));
     }
 

@@ -28,7 +28,7 @@ public final class SearchCommand extends Command {
     @Override
     public boolean checkChannel(final Message message) {
         final MusicDashboard dashboard = this.dashboardService.getDashboard(message.getGuild(), MusicDashboard.class);
-        return dashboard != null && dashboard.getChannel().getChannel().equals(message.getTextChannel());
+        return dashboard != null && dashboard.getChannel() != null && dashboard.getChannel().getChannel().equals(message.getTextChannel());
     }
 
     @Override

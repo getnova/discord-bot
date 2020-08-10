@@ -53,7 +53,7 @@ public final class MusicService {
         this.commandService.addCommand(SearchCommand.class);
         this.commandService.addCommand(SkipCommand.class);
         this.eventService.addListener(MusicEvent.class);
-        this.dashboardService.addDashboard(MusicDashboard.class);
+        this.dashboardService.addDashboard("music", MusicDashboard.class);
     }
 
     @StartService

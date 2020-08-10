@@ -5,6 +5,7 @@ import emoji4j.EmojiUtils;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -31,6 +32,7 @@ public abstract class Dashboard {
     private final List<DashboardReaction> reactions;
     private JDA jda;
     @Getter
+    @Setter(AccessLevel.PACKAGE)
     private Guild guild;
     @Getter
     private DashboardChannel channel;
@@ -47,14 +49,14 @@ public abstract class Dashboard {
     }
 
     public final void render() {
-        this.channel.renderDashboard(this.update(), this.reactions);
+        if (this.channel != null) this.channel.renderDashboard(this.update(), this.reactions);
     }
 
     protected abstract MessageEmbed update();
 
     final void init(final ReactionService reactionService, final TextChannel channel) {
-        this.jda = channel.getJDA();
-        this.guild = channel.getGuild();
+        if (this.channel != null) this.channel.clean(true);
+        else this.jda = channel.getJDA();
         this.channel = new DashboardChannel(reactionService, channel,
                 this.reactions.stream().collect(Collectors.toMap(DashboardReaction::getEmoji, Function.identity())));
     }

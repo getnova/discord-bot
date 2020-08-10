@@ -18,6 +18,9 @@ public final class GitHubCommand extends Command {
 
     @Override
     public void execute(final Message message, final String[] args) {
-        MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createInfoEmbed("GitHub: https://github.com/getnova/discord-bot")));
+        MessageUtils.temporallyMessage(message, message.getChannel().sendMessage(MessageUtils.createInfoEmbed(
+                "GitHub: https://github.com/getnova/discord-bot\n"
+                        + "Issues: https://github.com/getnova/discord-bot/issues"
+        )));
     }
 }

@@ -1,37 +1,35 @@
 package net.getnova.backend.discord.dashboard;
 
+import com.google.inject.Injector;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.getnova.backend.Nova;
 import net.getnova.backend.discord.DiscordBot;
 import net.getnova.backend.discord.config.ConfigService;
 import net.getnova.backend.discord.reaction.ReactionService;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
-import net.getnova.backend.service.event.PostInitService;
-import net.getnova.backend.service.event.PostInitServiceEvent;
 import net.getnova.backend.service.event.StartService;
 import net.getnova.backend.service.event.StartServiceEvent;
+import net.getnova.backend.sql.SqlService;
+import org.hibernate.Session;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service(id = "discord-dashboard", depends = {DiscordBot.class, ReactionService.class, ConfigService.class})
+@Service(id = "discord-dashboard", depends = {DiscordBot.class, ReactionService.class, ConfigService.class, SqlService.class})
 @Singleton
 @Slf4j
 public final class DashboardService {
 
-    private final Set<Class<? extends Dashboard>> dashboardTypes;
+    private final Map<String, Class<? extends Dashboard>> dashboardTypes;
     private final Set<Dashboard> dashboards;
-
-    @Inject
-    private Nova nova;
 
     @Inject
     private InjectionHandler injectionHandler;
@@ -42,37 +40,52 @@ public final class DashboardService {
     @Inject
     private ConfigService configService;
 
+    @Inject
+    private SqlService sqlService;
+
     public DashboardService() {
-        this.dashboardTypes = new LinkedHashSet<>();
+        this.dashboardTypes = new LinkedHashMap<>();
         this.dashboards = new LinkedHashSet<>();
-    }
-
-    @PostInitService
-    private void postInit(final PostInitServiceEvent event) {
-        this.configService.addKey("test", "this is a test", "123", (guild, value) -> log.info(guild.getName() + ": " + value));
-
-        for (final Guild guild : this.injectionHandler.getInjector().getInstance(JDA.class).getGuilds()) {
-            Dashboard dashboard;
-            List<TextChannel> channels;
-
-            for (final Class<? extends Dashboard> dashboardType : this.dashboardTypes) {
-                dashboard = this.injectionHandler.getInjector().getInstance(dashboardType);
-                channels = guild.getTextChannelsByName(this.nova.isDebug() ? dashboard.getId() + "-debug" : dashboard.getId(), false);
-                if (!channels.isEmpty()) {
-                    dashboard.init(this.reactionService, channels.get(0));
-                    this.dashboards.add(dashboard);
-                }
-            }
-        }
     }
 
     @StartService
     private void start(final StartServiceEvent event) {
-        this.dashboards.forEach(Dashboard::render);
+        final Injector injector = this.injectionHandler.getInjector();
+        final JDA jda = injector.getInstance(JDA.class);
+
+        try (Session session = this.sqlService.openSession()) {
+            this.dashboardTypes.forEach((id, clazz) -> {
+                final String key = "channel_" + id;
+                final ConfigService.ConfigEntry entry = this.configService.addKey(key,
+                        "Channel for the \"" + id + "\" dashboard",
+                        null,
+                        (guild, value) -> this.initDashboard(jda, this.getDashboard(guild, clazz), value));
+
+                jda.getGuilds().forEach(guild -> {
+                    final Dashboard dashboard = injector.getInstance(clazz);
+                    dashboard.setGuild(guild);
+                    this.dashboards.add(dashboard);
+                    final String value = entry.getValue(session, guild, key);
+                    if (value != null) this.initDashboard(jda, dashboard, value);
+                });
+            });
+        }
     }
 
-    public void addDashboard(final Class<? extends Dashboard> dashboard) {
-        this.dashboardTypes.add(dashboard);
+    private void initDashboard(final JDA jda, final Dashboard dashboard, final String value) {
+        final String channelId = value.substring(2, value.length() - 1);
+        final TextChannel channel = jda.getTextChannelById(channelId);
+
+        if (channel == null) {
+            log.warn("Channel " + value + " can not be found.");
+        } else {
+            dashboard.init(this.reactionService, channel);
+            dashboard.render();
+        }
+    }
+
+    public void addDashboard(final String id, final Class<? extends Dashboard> dashboard) {
+        this.dashboardTypes.put(id, dashboard);
     }
 
     public Set<Dashboard> getDashboards(final Class<? extends Dashboard> type) {
