@@ -5,7 +5,7 @@ import net.getnova.backend.discord.MessageUtils;
 import net.getnova.backend.discord.command.Command;
 import net.getnova.backend.discord.command.CommandCategory;
 
-public class GitHubCommand extends Command {
+public final class GitHubCommand extends Command {
 
     public GitHubCommand() {
         super("github", CommandCategory.GENERAL, "Shows the link to the [GitHub Repository](https://github.com/getnova/discord-bot) of this bot.");
