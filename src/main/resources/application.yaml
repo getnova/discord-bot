@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://[::1]:3306/nova
+    username: nova
+    password: nova
+  jpa:
+    hibernate:
+      ddl-auto: update
+discord:
+  token: ${DISCORD_TOKEN}
+  prefix: ${DISCORD_PREFIX}

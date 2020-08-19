@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "discord.token",
+      "type": "java.lang.String",
+      "description": "The Discord Api token which should be used for the bot. You can create or retrieve a token at the discord developer portal (https://discord.com/developers)."
+    },
+    {
+      "name": "discord.prefix",
+      "type": "java.lang.String",
+      "description": "Prefix for all commands, e.g. '!', '?', '.'."
+    }
+  ]
+}
