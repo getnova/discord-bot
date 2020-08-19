@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mariadb://[::1]:3306/nova
-    username: nova
-    password: nova
+    url: jdbc:mariadb://${MARIADB_HOST}:${MARIADB_PORT}/${MARIADB_DATABASE}
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
