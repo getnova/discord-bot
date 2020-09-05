@@ -5,8 +5,8 @@ on:
     # Publish `v1.2.3` tags as releases.
     tags:
       - v*
-    branches: [master]
-    paths-ignore: ['**.md']
+    branches: [ master ]
+    paths-ignore: [ '**.md' ]
 
 env:
   IMAGE_NAME: getnova/discord-bot
@@ -19,9 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
-          path: ~/.gradle/caches
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -44,9 +46,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
-          path: ~/.gradle/caches
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -88,6 +92,7 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+
       - name: Create Version
         id: prepare
         run: |
@@ -102,6 +107,7 @@ jobs:
           echo ::set-output name=version::$VERSION
           echo ::set-output name=buildx_args::--platform $DOCKER_PLATFORMS \
             ${TAGS} --file ./docker/Dockerfile.github-actions ./
+
       - name: Docker Buildx (build)
         run: docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
 
