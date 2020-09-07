@@ -3,7 +3,7 @@ plugins {
     id 'io.freefair.git-version' version '5.2.1'
     id 'io.freefair.lombok' version '5.2.1'
     id 'io.freefair.javadoc-utf-8' version '5.2'
-    id 'io.freefair.javadoc-links' version '5.2'
+    id 'io.freefair.javadoc-links' version '5.2.1'
     id 'checkstyle'
     id 'jacoco'
 }
