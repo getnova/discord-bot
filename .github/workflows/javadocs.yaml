@@ -32,7 +32,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run checks with Gradle
-        run: ./gradlew check --no-daemon
+        run: ./gradlew check --no-daemon --refresh-dependencies
 
   docs:
     needs: check
