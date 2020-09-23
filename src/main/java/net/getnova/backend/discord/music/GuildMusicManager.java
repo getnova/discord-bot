@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.backend.discord.music.dashboard.MusicDashboard;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -42,5 +43,9 @@ public class GuildMusicManager {
   public Mono<Void> leave() {
     return this.voiceConnection.disconnect()
       .doOnNext(ignored -> this.voiceConnection = null);
+  }
+
+  public void setTextChannel(final TextChannel channel) {
+    this.dashboard.initDashboard(channel);
   }
 }

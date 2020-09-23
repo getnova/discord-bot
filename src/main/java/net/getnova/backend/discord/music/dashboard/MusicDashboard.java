@@ -1,4 +1,4 @@
-package net.getnova.backend.discord.music;
+package net.getnova.backend.discord.music.dashboard;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
@@ -8,6 +8,7 @@ import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.Color;
+import net.getnova.backend.discord.music.GuildMusicManager;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,12 +20,11 @@ import java.util.function.Consumer;
 public class MusicDashboard {
 
   private static final int PAGE_SIZE = 10;
-
   private final GuildMusicManager musicManager;
 
   private TextChannel channel;
   private Message message;
-  private int offset;
+  private final int offset;
 
   public MusicDashboard(final GuildMusicManager musicManager) {
     this.musicManager = musicManager;
@@ -32,9 +32,15 @@ public class MusicDashboard {
   }
 
   public void initDashboard(final TextChannel channel) {
+    if (this.channel != null && this.message != null)
+      this.channel.getMessagesBefore(message.getId())
+        .transform(this.channel::bulkDeleteMessages)
+        .flatMap(Message::delete)
+        .subscribe();
+
     this.channel = channel;
 
-    channel.createEmbed(this.nothingPlaying())
+    this.channel.createEmbed(this.nothingPlaying())
       .flatMapMany(message -> {
         this.message = message;
         return channel.bulkDeleteMessages(channel.getMessagesBefore(message.getId()));
@@ -48,22 +54,21 @@ public class MusicDashboard {
       .flatMap(message -> message.delete().delaySubscription(Duration.ofSeconds(10)))
       .subscribe();
 
-
     Flux.interval(Duration.ofSeconds(10), Duration.ofSeconds(10))
       .flatMap(ignored -> this.updateDashboard())
       .subscribe();
   }
 
   public Mono<?> updateDashboard() {
-    return this.message.edit(spec -> spec.setEmbed(
-      (this.musicManager.getPlayer().getPlayingTrack() == null)
-        ? this.nothingPlaying()
-        : this.playlist()
-    )).onErrorResume(ClientException.class, ignored -> this.channel.createEmbed(
-      (this.musicManager.getPlayer().getPlayingTrack() == null)
-        ? this.nothingPlaying()
-        : this.playlist()
-    )).doOnNext(message -> this.message = message);
+    return this.message.edit(spec -> spec.setEmbed(this.render()))
+      .onErrorResume(ClientException.class, ignored -> this.channel.createEmbed(this.render()))
+      .doOnNext(message -> this.message = message);
+  }
+
+  private Consumer<? super EmbedCreateSpec> render() {
+    return (this.musicManager.getPlayer().getPlayingTrack() == null)
+      ? this.nothingPlaying()
+      : this.playlist();
   }
 
   private Consumer<? super EmbedCreateSpec> nothingPlaying() {

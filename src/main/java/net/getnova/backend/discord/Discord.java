@@ -2,19 +2,23 @@ package net.getnova.backend.discord;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
+import javax.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.boot.Bootstrap;
 import net.getnova.backend.boot.module.Module;
-import net.getnova.backend.sql.JpaModule;
+import net.getnova.backend.jpa.JpaModule;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.PreDestroy;
 import java.time.Duration;
 
 @Slf4j
 @Module(JpaModule.class)
 @ComponentScan
+@EnableTransactionManagement
+@EnableJpaRepositories
 public class Discord {
 
   private static final Duration LIFECYCLE_TIMEOUT = Duration.ofSeconds(10);
