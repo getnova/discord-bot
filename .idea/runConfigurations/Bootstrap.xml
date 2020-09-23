@@ -3,7 +3,7 @@
     <envs>
       <env name="SQL_SERVER_LOCATION" value="mariadb://[::1]:3306" />
       <env name="DEBUG" value="true" />
-      <env name="DISCORD_BOT_TOKEN" value="NzE4OTMzODk1NDkxMzU0Njk0.XtwFXQ.MPla_W-uC15EWtm8OQQh0krpoJQ" />
+      <env name="DISCORD_BOT_TOKEN" value="" />
       <env name="DISCORD_BOT_PREFIX" value="?" />
     </envs>
     <option name="INCLUDE_PROVIDED_SCOPE" value="true" />

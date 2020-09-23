@@ -33,7 +33,7 @@ public abstract class MusicCommand extends Command {
   }
 
   protected Mono<Message> checkChannel(final Message message, final GuildMusicManager musicManager, final VoiceChannel channel) {
-    if (musicManager.getVoiceChannel() != null && musicManager.getVoiceChannel() != channel) {
+    if (musicManager.getVoiceChannel() != null && !musicManager.getVoiceChannel().equals(channel)) {
       return message.edit(spec -> spec.setContent("This bot is already used in another channel."));
     }
     return null;

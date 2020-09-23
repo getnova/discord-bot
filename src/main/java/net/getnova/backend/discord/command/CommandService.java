@@ -1,13 +1,14 @@
 package net.getnova.backend.discord.command;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.discord.Discord;
 import net.getnova.backend.discord.DiscordConfig;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,12 @@ public class CommandService {
     if (command == null)
       return event.getMessage()
         .getChannel()
-        .flatMap(channel -> channel.createMessage(String.format("Command `%s` was not found.", content[0])));
+        .flatMap(channel ->
+          channel.createMessage(String.format("Command `%s` was not found.", content[0]))
+            .doOnNext(message ->
+              event.getMessage().delete().and(message.delete()).delaySubscription(Duration.ofSeconds(10)).subscribe()
+            )
+        );
 
     try {
       return command.execute(arguments, event);
@@ -59,7 +65,11 @@ public class CommandService {
       log.error("Unable to execute command \"{}\" with arguments \"{}\". ", content[0], String.join(" ", arguments), cause);
       return event.getMessage()
         .getChannel()
-        .flatMap(channel -> channel.createMessage("500 Internal Bot Error"));
+        .flatMap(channel -> channel.createMessage("500 Internal Bot Error")
+          .doOnNext(message ->
+            event.getMessage().delete().and(message.delete()).delaySubscription(Duration.ofSeconds(10)).subscribe()
+          )
+        );
     }
   }
 }

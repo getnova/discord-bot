@@ -24,7 +24,7 @@ public class ResultHandler implements AudioLoadResultHandler {
     this.musicManager.getScheduler().queue(track);
     this.message.edit(spec -> {
       final AudioTrackInfo info = track.getInfo();
-      spec.setContent("Loaded **" + info.title + "** from **" + info.author + "**.");
+      spec.setContent("Loaded **" + info.title + "** by **" + info.author + "**.");
     }).subscribe();
   }
 
@@ -37,7 +37,7 @@ public class ResultHandler implements AudioLoadResultHandler {
       scheduler.queue(track);
       this.message.edit(spec -> {
         final AudioTrackInfo info = track.getInfo();
-        spec.setContent("Loaded **" + info.title + "** from **" + info.author + "**.");
+        spec.setContent("Loaded **" + info.title + "** by **" + info.author + "**.");
       }).subscribe();
     } else {
       scheduler.queue(playlist.getSelectedTrack(), tracks);

@@ -6,7 +6,7 @@ on:
       - '*'
     branches-ignore:
       - master
-    paths-ignore: ['**.md']
+    paths-ignore: [ '**.md' ]
 
 jobs:
   check:

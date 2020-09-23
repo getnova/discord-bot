@@ -2,7 +2,6 @@ package net.getnova.backend.discord;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
-import javax.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.boot.Bootstrap;
@@ -10,6 +9,7 @@ import net.getnova.backend.boot.module.Module;
 import net.getnova.backend.sql.JpaModule;
 import org.springframework.context.annotation.ComponentScan;
 
+import javax.annotation.PreDestroy;
 import java.time.Duration;
 
 @Slf4j
