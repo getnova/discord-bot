@@ -1,3 +1,0 @@
-FROM getnova/nova-backend:latest
-
-COPY --chown=nova:nova ./nova-discod-bot/ /data/modules/

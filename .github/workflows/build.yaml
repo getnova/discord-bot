@@ -33,7 +33,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run checks with Gradle
-        run: ./gradlew check --no-daemon --refresh-dependencies
+        run: ./gradlew check javadoc --no-daemon
 
   build:
     needs: check
@@ -60,7 +60,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew assemble --no-daemon
+        run: ./gradlew :shadowJar --no-daemon
 
       - uses: actions/upload-artifact@v2
         with:
