@@ -1,0 +1,23 @@
+FROM adoptopenjdk:15-jre-hotspot
+
+ARG BOT_USER=nova-bot
+ARG BOT_GROUP=nova-bot
+
+ENV BOT_HOME /opt/nova-bot
+ENV DATA_DIR /data
+
+RUN set -o errexit -o nounset \
+    && groupadd --system --gid 1000 ${BOT_GROUP} \
+    && useradd --system --gid ${BOT_GROUP} --uid 1000 --shell /bin/bash --create-home ${BOT_USER} \
+    && mkdir -p ${DATA_DIR} \
+    && chown --recursive ${BOT_USER}:${BOT_GROUP} ${DATA_DIR} \
+    && chown --recursive ${BOT_USER}:${BOT_GROUP} /home/${BOT_USER}
+
+WORKDIR ${DATA_DIR}
+COPY --chown=${BOT_USER}:${BOT_GROUP} ./build/install/discord-bot/ ${BOT_HOME}/
+
+RUN ln --symbolic ${BOT_HOME}/bin/discord-bot /usr/bin/nova-bot \
+  && chmod +x /usr/bin/nova-bot
+USER ${BOT_USER}
+
+ENTRYPOINT ["nova-bot", "net.getnova.backend.module.discord.Discord"]

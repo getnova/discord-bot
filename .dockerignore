@@ -267,7 +267,7 @@ $RECYCLE.BIN/
 
 ### Gradle ###
 .gradle
-build/
+#build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -282,7 +282,7 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 ### Gradle Patch ###
-**/build/
+#**/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/java,linux,macos,gradle,windows,intellij+all,eclipse,git
 
