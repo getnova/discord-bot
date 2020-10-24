@@ -21,10 +21,9 @@ public class MusicDashboard {
 
   private static final int PAGE_SIZE = 10;
   private final GuildMusicManager musicManager;
-
+  private final int offset;
   private TextChannel channel;
   private Message message;
-  private final int offset;
 
   public MusicDashboard(final GuildMusicManager musicManager) {
     this.musicManager = musicManager;
@@ -52,9 +51,9 @@ public class MusicDashboard {
         && (message.getEmbeds().size() == 0
         || message.getEmbeds().get(0).getTitle().stream().noneMatch(s -> s.startsWith("Music :small_orange_diamond:"))))
       .flatMap(message -> message.delete().delaySubscription(Duration.ofSeconds(10)))
-      .subscribe();
 
-    Flux.interval(Duration.ofSeconds(10), Duration.ofSeconds(10))
+      // Updating the dashboard every 10 seconds and starting after 10 seconds.
+      .thenMany(Flux.interval(Duration.ofSeconds(10), Duration.ofSeconds(10)))
       .flatMap(ignored -> this.updateDashboard())
       .subscribe();
   }

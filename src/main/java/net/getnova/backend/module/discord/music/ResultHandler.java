@@ -52,6 +52,11 @@ public class ResultHandler implements AudioLoadResultHandler {
 
   @Override
   public void loadFailed(final FriendlyException exception) {
+    if (exception.getMessage().equals("Received unexpected response from YouTube.")) {
+      this.message.edit(spec -> spec.setContent("Received unexpected response from YouTube. Please try again.")).subscribe();
+      return;
+    }
+
     this.message.edit(spec -> spec.setContent("Error while loading...")).subscribe();
     log.error("Unable to load tracks... ({})", this.identifier, exception);
   }

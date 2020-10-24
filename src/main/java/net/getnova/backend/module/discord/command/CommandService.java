@@ -39,37 +39,39 @@ public class CommandService {
   private void postConstruct() {
     this.discord.getClient().getEventDispatcher().on(MessageCreateEvent.class)
       .filter(event -> event.getMessage().getContent().startsWith(this.prefix))
-      .flatMap(this::messageCreated)
-      .subscribe();
+      .subscribe(this::messageCreated);
   }
 
-  private Mono<?> messageCreated(final MessageCreateEvent event) {
+  private void messageCreated(final MessageCreateEvent event) {
     final String rawContent = event.getMessage().getContent().substring(this.prefixLength);
     final String[] content = Arrays.stream(rawContent.split("[ \t\n\r\f]")).filter(entry -> !entry.isBlank()).toArray(String[]::new);
-    final String[] arguments = Arrays.copyOfRange(content, 1, content.length);
     final Command command = this.commands.get(content[0]);
 
-    if (command == null)
-      return event.getMessage()
+    if (command == null) {
+      event.getMessage()
         .getChannel()
-        .flatMap(channel ->
-          channel.createMessage(String.format("Command `%s` was not found.", content[0]))
-            .doOnNext(message ->
-              event.getMessage().delete().and(message.delete()).delaySubscription(Duration.ofSeconds(10)).subscribe()
-            )
-        );
+        .flatMap(channel -> channel.createMessage(String.format("Command `%s` was not found.", content[0])))
+        .flatMap(message -> Mono.zip(event.getMessage().delete(), message.delete()).delaySubscription(Duration.ofSeconds(10)))
+        .doOnError(cause -> {
+          if (cause.getMessage() == null || !cause.getMessage().contains("Unknown Message")) {
+            log.error("Unable to delete \"Command not found\" message.", cause);
+          }
+        })
+        .subscribe();
+      return;
+    }
+
+    final String[] arguments = Arrays.copyOfRange(content, 1, content.length);
 
     try {
-      return command.execute(arguments, event);
+      command.execute(arguments, event).block();
     } catch (Throwable cause) {
-      log.error("Unable to execute command \"{}\" with arguments \"{}\". ", content[0], String.join(" ", arguments), cause);
-      return event.getMessage()
+      log.error("Unable to execute command \"{}\" with arguments \"{}\". ", content[0], String.join(" ", arguments),
+        cause instanceof RuntimeException && cause.getCause() != null ? cause.getCause() : cause);
+      event.getMessage()
         .getChannel()
-        .flatMap(channel -> channel.createMessage("500 Internal Bot Error")
-          .doOnNext(message ->
-            event.getMessage().delete().and(message.delete()).delaySubscription(Duration.ofSeconds(10)).subscribe()
-          )
-        );
+        .flatMap(channel -> channel.createMessage("500 Internal Bot Error"))
+        .subscribe();
     }
   }
 }
