@@ -60,9 +60,4 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew :shadowJar --no-daemon
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: nova-discod-bot
-          path: build/libs
+        run: ./gradlew :installDist --no-daemon

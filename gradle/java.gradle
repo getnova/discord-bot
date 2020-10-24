@@ -1,0 +1,24 @@
+repositories {
+  maven {
+    url 'https://dl.bintray.com/getnova/maven'
+  }
+  jcenter()
+}
+
+jar {
+  manifest {
+    attributes([
+      'Specification-Title'     : project.name,
+      'Specification-Vendor'    : 'Nova Project (https://github.com/getnova)',
+      'Specification-Version'   : project.version,
+      'Implementation-Vendor'   : 'Nova Project (https://github.com/getnova)',
+      'Implementation-Timestamp': new Date().format('yyyy-MM-dd\'T\'HH:mm:ssZ')
+    ])
+  }
+}
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_15
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
