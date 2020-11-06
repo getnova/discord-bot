@@ -6,8 +6,10 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.Color;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.module.discord.music.GuildMusicManager;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,51 +19,77 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+@Slf4j
 public class MusicDashboard {
 
   private static final int PAGE_SIZE = 10;
   private final GuildMusicManager musicManager;
-  private final int offset;
+  private int offset;
   private TextChannel channel;
+  @Getter(AccessLevel.PACKAGE)
   private Message message;
 
   public MusicDashboard(final GuildMusicManager musicManager) {
     this.musicManager = musicManager;
     this.offset = 0;
+
+    // Updating the dashboard every 10 seconds and starting after 10 seconds.
+    Flux.interval(Duration.ofSeconds(10), Duration.ofSeconds(10))
+      .flatMap(ignored -> this.updateDashboard())
+      .subscribe(); // TODO: Stop when Dashboard is destroyed: e.g. if the bot leaves a server
   }
 
   public void initDashboard(final TextChannel channel) {
-    if (this.channel != null && this.message != null)
-      this.channel.getMessagesBefore(message.getId())
-        .transform(this.channel::bulkDeleteMessages)
-        .flatMap(Message::delete)
-        .subscribe();
-
     this.channel = channel;
 
     this.channel.createEmbed(this.nothingPlaying())
-      .flatMapMany(message -> {
+      .flatMap(message -> {
         this.message = message;
-        return channel.bulkDeleteMessages(channel.getMessagesBefore(message.getId()));
+        return this.clean();
       })
-      .flatMap(Message::delete)
       .thenMany(this.channel.getClient().on(MessageCreateEvent.class))
       .map(MessageCreateEvent::getMessage)
       .filter(message -> message.getChannelId().equals(this.channel.getId())
         && (message.getEmbeds().size() == 0
-        || message.getEmbeds().get(0).getTitle().stream().noneMatch(s -> s.startsWith("Music :small_orange_diamond:"))))
+        || message.getEmbeds().get(0).getTitle().stream().noneMatch(s -> s.startsWith("Music :small_orange_diamond: "))))
       .flatMap(message -> message.delete().delaySubscription(Duration.ofSeconds(10)))
-
-      // Updating the dashboard every 10 seconds and starting after 10 seconds.
-      .thenMany(Flux.interval(Duration.ofSeconds(10), Duration.ofSeconds(10)))
-      .flatMap(ignored -> this.updateDashboard())
       .subscribe();
   }
 
+  private Mono<Void> clean() {
+    if (this.channel == null || this.message == null)
+      return Mono.empty();
+
+    return this.channel.getMessagesBefore(this.message.getId())
+      .transform(this.channel::bulkDeleteMessages)
+      .flatMap(Message::delete)
+      .then();
+  }
+
+  public void changePage(final int change) {
+    this.offset += change;
+  }
+
   public Mono<?> updateDashboard() {
+    if (this.channel == null || this.message == null) return Mono.empty();
+
     return this.message.edit(spec -> spec.setEmbed(this.render()))
-      .onErrorResume(ClientException.class, ignored -> this.channel.createEmbed(this.render()))
-      .doOnNext(message -> this.message = message);
+      .doOnError(
+        cause -> {
+          if (cause.getMessage() == null || !cause.getMessage().contains("Unknown Message")) {
+            log.error("Unable to update dashboard.");
+            return;
+          }
+
+          /* this.message was deleted */
+          this.channel.createEmbed(this.render())
+            .flatMap(message -> {
+              this.message = message;
+              return this.clean();
+            })
+            .subscribe();
+        }
+      );
   }
 
   private Consumer<? super EmbedCreateSpec> render() {
@@ -73,7 +101,7 @@ public class MusicDashboard {
   private Consumer<? super EmbedCreateSpec> nothingPlaying() {
     return (Consumer<EmbedCreateSpec>) spec -> spec
       .setTitle("Music :small_orange_diamond: No music playback")
-      .setDescription("Here you can always see the state of the music that is currently being played.")
+      .setDescription("Here you can always see the state of the music that is currently being played. Use !play and !search.")
       .setColor(Color.of(0x00ED9728))
       .addField("No music playback", ":x: No music is currently being played.", false);
   }

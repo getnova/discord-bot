@@ -21,6 +21,7 @@ public class TrackScheduler extends AudioEventAdapter {
   private final AudioPlayer player;
   private final BlockingQueue<AudioTrack> queue;
   private AudioTrack currentTrack;
+  private long pausePosition;
   private boolean playing;
 
   public TrackScheduler(final GuildMusicManager musicManager) {
@@ -28,6 +29,7 @@ public class TrackScheduler extends AudioEventAdapter {
     this.player = musicManager.getPlayer();
     this.queue = new LinkedBlockingQueue<>();
     this.currentTrack = null;
+    this.pausePosition = -1;
     this.playing = false;
   }
 
@@ -72,6 +74,25 @@ public class TrackScheduler extends AudioEventAdapter {
       this.musicManager.leave().subscribe();
       this.musicManager.setVoiceChannel(null);
     }
+  }
+
+  public void stop() {
+    if (this.isPlaying()) this.player.stopTrack();
+    this.currentTrack = null;
+    this.pausePosition = -1;
+  }
+
+  public void resume() {
+    if (this.isPlaying()) throw new IllegalStateException();
+    this.player.startTrack(this.currentTrack, false);
+    this.player.getPlayingTrack().setPosition(this.pausePosition);
+    this.pausePosition = -1;
+  }
+
+  public void pause() {
+    if (!this.isPlaying()) throw new IllegalStateException();
+    this.pausePosition = this.player.getPlayingTrack().getPosition();
+    this.player.stopTrack();
   }
 
   private Mono<VoiceConnection> checkConnection() {

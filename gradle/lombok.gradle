@@ -1,3 +1,4 @@
 lombok {
   config.put('lombok.equalsandhashcode.callsuper', 'CALL')
+  config.put('lombok.tostring.callsuper', 'CALL')
 }

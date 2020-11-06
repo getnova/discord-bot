@@ -57,6 +57,11 @@ public class ResultHandler implements AudioLoadResultHandler {
       return;
     }
 
+    if (exception.getMessage().equals("This video cannot be viewed anonymously.")) {
+      this.message.edit(spec -> spec.setContent("This video cannot be viewed anonymously.")).subscribe();
+      return;
+    }
+
     this.message.edit(spec -> spec.setContent("Error while loading...")).subscribe();
     log.error("Unable to load tracks... ({})", this.identifier, exception);
   }
