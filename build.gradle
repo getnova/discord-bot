@@ -26,7 +26,7 @@ repositories {
 
 dependencies {
     compile 'net.dv8tion:JDA:4.2.0_210'
-    compile 'com.sedmelluq:lavaplayer:1.3.55'
+    compile 'com.sedmelluq:lavaplayer:1.3.58'
     compile 'com.kcthota:emoji4j:6.0'
 
     implementation 'net.getnova.backend:nova-logging:1.0.6'
