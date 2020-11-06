@@ -83,14 +83,15 @@ public class TrackScheduler extends AudioEventAdapter {
   }
 
   public void resume() {
-    if (this.isPlaying()) throw new IllegalStateException();
+    if (this.isPlaying()) throw new IllegalStateException("Currently playing");
+    if (this.currentTrack == null) throw new IllegalStateException("Nothing queued");
     this.player.startTrack(this.currentTrack, false);
     this.player.getPlayingTrack().setPosition(this.pausePosition);
     this.pausePosition = -1;
   }
 
   public void pause() {
-    if (!this.isPlaying()) throw new IllegalStateException();
+    if (!this.isPlaying()) throw new IllegalStateException("Nothing playing");
     this.pausePosition = this.player.getPlayingTrack().getPosition();
     this.player.stopTrack();
   }
