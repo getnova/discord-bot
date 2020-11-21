@@ -1,11 +1,11 @@
-package net.getnova.backend.module.discord.music.commands;
+package net.getnova.module.discord.music.commands;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
-import net.getnova.backend.module.discord.music.GuildMusicManager;
-import net.getnova.backend.module.discord.music.MusicService;
-import net.getnova.backend.module.discord.music.ResultHandler;
+import net.getnova.module.discord.music.GuildMusicManager;
+import net.getnova.module.discord.music.MusicService;
+import net.getnova.module.discord.music.ResultHandler;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 

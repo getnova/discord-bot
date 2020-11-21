@@ -1,4 +1,4 @@
-package net.getnova.backend.module.discord.music;
+package net.getnova.module.discord.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -8,8 +8,12 @@ import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
+import javax.annotation.PostConstruct;
 import lombok.Getter;
-import net.getnova.backend.module.discord.Discord;
+import net.getnova.module.discord.Discord;
+import net.getnova.module.discord.music.dashboard.MusicDashboardService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -23,16 +27,22 @@ public class MusicService {
   @Getter
   private final AudioPlayerManager playerManager;
 
+  @Lazy
+  @Autowired
+  private MusicDashboardService dashboardService;
+
   public MusicService(final Discord discord) {
     this.discord = discord;
     this.musicManagers = new ConcurrentHashMap<>();
     this.playerManager = new DefaultAudioPlayerManager();
     AudioSourceManagers.registerRemoteSources(this.playerManager);
+  }
 
+  @PostConstruct
+  private void postConstruct() {
     this.discord.getClient().getGuilds()
-      .subscribe(this::getMusicManager);
-
-    this.discord.getClient().getEventDispatcher().on(GuildCreateEvent.class)
+      .doOnNext(this::getMusicManager)
+      .thenMany(this.discord.getClient().getEventDispatcher().on(GuildCreateEvent.class))
       .subscribe(event -> this.getMusicManager(event.getGuild()));
   }
 
@@ -47,7 +57,8 @@ public class MusicService {
           .filter(channel -> channel.getName().equals("test123"))
           .filter(channel -> channel.getType().equals(Channel.Type.GUILD_TEXT))
           .cast(TextChannel.class)
-          .blockFirst()
+          .blockFirst(),
+        this.dashboardService
       );
       this.musicManagers.put(guildId, musicManager);
     }

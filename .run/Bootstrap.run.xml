@@ -4,9 +4,9 @@
       <env name="DEBUG" value="true"/>
     </envs>
     <option name="INCLUDE_PROVIDED_SCOPE" value="true"/>
-    <option name="MAIN_CLASS_NAME" value="net.getnova.backend.boot.Bootstrap"/>
+    <option name="MAIN_CLASS_NAME" value="net.getnova.framework.boot.Bootstrap"/>
     <module name="discord-bot.main"/>
-    <option name="PROGRAM_PARAMETERS" value="net.getnova.backend.module.discord.Discord"/>
+    <option name="PROGRAM_PARAMETERS" value="Discord"/>
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run"/>
     <method v="2">
       <option name="Make" enabled="true"/>

@@ -1,4 +1,4 @@
-package net.getnova.backend.module.discord.config;
+package net.getnova.module.discord.config;
 
 import discord4j.core.object.entity.Guild;
 import lombok.AccessLevel;

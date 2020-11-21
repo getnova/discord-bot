@@ -1,8 +1,8 @@
-package net.getnova.backend.module.discord.music.commands;
+package net.getnova.module.discord.music.commands;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import net.getnova.backend.module.discord.command.Command;
-import net.getnova.backend.module.discord.music.MusicService;
+import net.getnova.module.discord.command.Command;
+import net.getnova.module.discord.music.MusicService;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 

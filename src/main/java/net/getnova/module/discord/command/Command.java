@@ -1,4 +1,4 @@
-package net.getnova.backend.module.discord.command;
+package net.getnova.module.discord.command;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import lombok.Getter;

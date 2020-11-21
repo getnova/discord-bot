@@ -1,7 +1,7 @@
-package net.getnova.backend.module.discord;
+package net.getnova.module.discord;
 
 import lombok.Getter;
-import net.getnova.backend.boot.config.Config;
+import net.getnova.framework.boot.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 
 @Config

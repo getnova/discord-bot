@@ -20,4 +20,4 @@ RUN ln --symbolic ${BOT_HOME}/bin/discord-bot /usr/bin/nova-bot \
   && chmod +x /usr/bin/nova-bot
 USER ${BOT_USER}
 
-ENTRYPOINT ["nova-bot", "net.getnova.backend.module.discord.Discord"]
+ENTRYPOINT ["nova-bot", "Discord"]

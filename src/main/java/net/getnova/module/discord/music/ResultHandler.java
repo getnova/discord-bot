@@ -1,4 +1,4 @@
-package net.getnova.backend.module.discord.music;
+package net.getnova.module.discord.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;

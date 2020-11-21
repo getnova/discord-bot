@@ -1,4 +1,4 @@
-package net.getnova.backend.module.discord.config;
+package net.getnova.module.discord.config;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.getnova.backend.jpa.model.TableModel;
+import net.getnova.framework.jpa.model.TableModel;
 
 import java.io.Serializable;
 

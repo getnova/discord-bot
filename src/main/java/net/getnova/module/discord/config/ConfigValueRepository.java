@@ -1,4 +1,4 @@
-package net.getnova.backend.module.discord.config;
+package net.getnova.module.discord.config;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

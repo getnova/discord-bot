@@ -1,13 +1,13 @@
-package net.getnova.backend.module.discord.music.commands;
+package net.getnova.module.discord.music.commands;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.VoiceState;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.VoiceChannel;
-import net.getnova.backend.module.discord.command.Command;
-import net.getnova.backend.module.discord.music.GuildMusicManager;
-import net.getnova.backend.module.discord.music.MusicService;
+import net.getnova.module.discord.command.Command;
+import net.getnova.module.discord.music.GuildMusicManager;
+import net.getnova.module.discord.music.MusicService;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple3;
 

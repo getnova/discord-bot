@@ -14,7 +14,7 @@
   "packageRules": [
     {
       "packagePatterns": [
-        "^net.getnova.backend:",
+        "^net.getnova.framework:",
         "getnova/nova-backend"
       ],
       "groupName": "Nova Backend"

@@ -1,17 +1,20 @@
-package net.getnova.backend.module.discord.music.dashboard;
+package net.getnova.module.discord.music.dashboard;
 
 import discord4j.core.event.domain.message.ReactionAddEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.reaction.ReactionEmoji;
 import javax.annotation.PostConstruct;
-import net.getnova.backend.module.discord.Discord;
-import net.getnova.backend.module.discord.music.GuildMusicManager;
-import net.getnova.backend.module.discord.music.MusicService;
-import net.getnova.backend.module.discord.music.TrackScheduler;
+import net.getnova.module.discord.Discord;
+import net.getnova.module.discord.music.GuildMusicManager;
+import net.getnova.module.discord.music.MusicService;
+import net.getnova.module.discord.music.TrackScheduler;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,17 +28,20 @@ public class MusicDashboardService {
   public MusicDashboardService(final Discord discord, final MusicService musicService) {
     this.discord = discord;
     this.musicService = musicService;
-    this.options = Map.of(
-      "⏯️", (event, musicManager) -> this.playPause(musicManager.getScheduler()),
-      "⏹️", (event, musicManager) -> musicManager.getScheduler().stop(),
-      "⏭️", (event, musicManager) -> musicManager.getScheduler().nextTrack(),
-      "⬆️", (event, musicManager) -> musicManager.getDashboard().changePage(1),
-      "⬇️", (event, musicManager) -> musicManager.getDashboard().changePage(-1)
-    );
+
+    final LinkedHashMap<String, MusicDashboardReactionOption> options = new LinkedHashMap<>();
+    options.put("⏯️", (event, musicManager) -> this.playPause(musicManager.getScheduler()));
+    options.put("⏹️", (event, musicManager) -> musicManager.getScheduler().stop());
+    options.put("⏭️", (event, musicManager) -> musicManager.getScheduler().nextTrack());
+    options.put("⬆️", (event, musicManager) -> musicManager.getDashboard().changePage(1));
+    options.put("⬇️", (event, musicManager) -> musicManager.getDashboard().changePage(-1));
+    this.options = Collections.unmodifiableMap(options);
   }
 
   public void createReactions(final Message message) {
-    this.options.forEach((key, value) -> message.addReaction(ReactionEmoji.unicode(key)));
+    Flux.fromIterable(this.options.keySet())
+      .flatMap(reaction -> message.addReaction(ReactionEmoji.unicode(reaction)))
+      .subscribe();
   }
 
   @PostConstruct
@@ -51,6 +57,8 @@ public class MusicDashboardService {
   }
 
   private void handleReaction(final ReactionAddEvent event, final Guild guild) {
+    if (event.getClient().getSelfId().equals(event.getUserId())) return;
+
     final GuildMusicManager musicManager = this.musicService.getMusicManager(guild);
     if (musicManager == null) return;
 

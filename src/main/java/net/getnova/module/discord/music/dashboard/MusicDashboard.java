@@ -1,4 +1,4 @@
-package net.getnova.backend.module.discord.music.dashboard;
+package net.getnova.module.discord.music.dashboard;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
@@ -10,7 +10,7 @@ import discord4j.rest.util.Color;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.module.discord.music.GuildMusicManager;
+import net.getnova.module.discord.music.GuildMusicManager;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -23,14 +23,18 @@ import java.util.function.Consumer;
 public class MusicDashboard {
 
   private static final int PAGE_SIZE = 10;
+
   private final GuildMusicManager musicManager;
+  private final MusicDashboardService dashboardService;
+
   private int offset;
   private TextChannel channel;
   @Getter(AccessLevel.PACKAGE)
   private Message message;
 
-  public MusicDashboard(final GuildMusicManager musicManager) {
+  public MusicDashboard(final GuildMusicManager musicManager, final MusicDashboardService dashboardService) {
     this.musicManager = musicManager;
+    this.dashboardService = dashboardService;
     this.offset = 0;
 
     // Updating the dashboard every 10 seconds and starting after 10 seconds.
@@ -45,6 +49,7 @@ public class MusicDashboard {
     this.channel.createEmbed(this.nothingPlaying())
       .flatMap(message -> {
         this.message = message;
+        this.dashboardService.createReactions(this.message);
         return this.clean();
       })
       .thenMany(this.channel.getClient().on(MessageCreateEvent.class))
@@ -85,6 +90,7 @@ public class MusicDashboard {
           this.channel.createEmbed(this.render())
             .flatMap(message -> {
               this.message = message;
+              this.dashboardService.createReactions(this.message);
               return this.clean();
             })
             .subscribe();

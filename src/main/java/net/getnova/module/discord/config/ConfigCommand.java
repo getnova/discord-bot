@@ -1,8 +1,8 @@
-package net.getnova.backend.module.discord.config;
+package net.getnova.module.discord.config;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
-import net.getnova.backend.module.discord.command.Command;
+import net.getnova.module.discord.command.Command;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 

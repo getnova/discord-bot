@@ -1,4 +1,4 @@
-package net.getnova.backend.module.discord.music;
+package net.getnova.module.discord.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -8,7 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.module.discord.music.dashboard.MusicDashboard;
+import net.getnova.module.discord.music.dashboard.MusicDashboard;
+import net.getnova.module.discord.music.dashboard.MusicDashboardService;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -25,12 +26,12 @@ public class GuildMusicManager {
   private VoiceChannel voiceChannel;
   private VoiceConnection voiceConnection;
 
-  public GuildMusicManager(final AudioPlayer player, final TextChannel textChannel) {
+  public GuildMusicManager(final AudioPlayer player, final TextChannel textChannel, final MusicDashboardService dashboardService) {
     this.player = player;
     this.scheduler = new TrackScheduler(this);
     this.player.addListener(this.scheduler);
     this.provider = new D4jAudioProvider(player);
-    this.dashboard = new MusicDashboard(this);
+    this.dashboard = new MusicDashboard(this, dashboardService);
     this.dashboard.initDashboard(textChannel);
   }
 

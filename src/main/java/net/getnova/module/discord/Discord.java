@@ -1,13 +1,13 @@
-package net.getnova.backend.module.discord;
+package net.getnova.module.discord;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import javax.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.boot.Bootstrap;
-import net.getnova.backend.boot.module.Module;
-import net.getnova.backend.jpa.JpaModule;
+import net.getnova.framework.boot.Bootstrap;
+import net.getnova.framework.boot.module.Module;
+import net.getnova.framework.jpa.JpaModule;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;

@@ -1,10 +1,10 @@
-package net.getnova.backend.module.discord.command;
+package net.getnova.module.discord.command;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.module.discord.Discord;
-import net.getnova.backend.module.discord.DiscordConfig;
+import net.getnova.module.discord.Discord;
+import net.getnova.module.discord.DiscordConfig;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
