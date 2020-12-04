@@ -1,7 +1,6 @@
 package net.getnova.module.discord.command;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.module.discord.Discord;
 import net.getnova.module.discord.DiscordConfig;
@@ -10,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,21 +24,19 @@ public class CommandService {
   private final int prefixLength;
 
   public CommandService(final Discord discord,
-                        final List<Command> commands,
+                        final Collection<Command> commands,
                         final DiscordConfig config) {
+
     this.discord = discord;
     this.commands = commands.stream().collect(Collectors.toMap(Command::getId, Function.identity()));
     this.prefix = config.getPrefix();
     this.prefixLength = this.prefix.length();
 
-    log.info("Loaded {} commands.", this.commands.size());
-  }
-
-  @PostConstruct
-  private void postConstruct() {
     this.discord.getClient().getEventDispatcher().on(MessageCreateEvent.class)
       .filter(event -> event.getMessage().getContent().startsWith(this.prefix))
       .subscribe(this::messageCreated);
+
+    log.info("Loaded {} commands.", this.commands.size());
   }
 
   private void messageCreated(final MessageCreateEvent event) {
