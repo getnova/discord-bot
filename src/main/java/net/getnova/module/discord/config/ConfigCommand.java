@@ -27,7 +27,7 @@ public class ConfigCommand extends Command {
 
   private Mono<Message> list(final MessageCreateEvent event) {
     return Mono.zip(event.getGuild(), event.getMessage().getChannel())
-      .flatMap(tupel -> {
+      .flatMap(tuple -> {
         final StringBuilder builder = new StringBuilder();
         builder.append("```yaml")
           .append("\n");
@@ -38,11 +38,11 @@ public class ConfigCommand extends Command {
             .append("\n")
             .append(key)
             .append(": ")
-            .append(this.configService.getValue(tupel.getT1(), key))
+            .append(this.configService.getValue(tuple.getT1(), key))
         );
         builder.append("```");
 
-        return tupel.getT2().createMessage(builder.toString());
+        return tuple.getT2().createMessage(builder.toString());
       });
   }
 

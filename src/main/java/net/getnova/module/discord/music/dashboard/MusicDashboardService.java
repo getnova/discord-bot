@@ -1,6 +1,7 @@
 package net.getnova.module.discord.music.dashboard;
 
 import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.event.domain.message.ReactionRemoveEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.reaction.ReactionEmoji;
@@ -32,9 +33,12 @@ public class MusicDashboardService {
     final LinkedHashMap<String, MusicDashboardReactionOption> options = new LinkedHashMap<>();
     options.put("⏯️", (event, musicManager) -> this.playPause(musicManager.getScheduler()));
     options.put("⏹️", (event, musicManager) -> musicManager.getScheduler().stop());
-    options.put("⏭️", (event, musicManager) -> musicManager.getScheduler().nextTrack());
-    options.put("⬆️", (event, musicManager) -> musicManager.getDashboard().changePage(1));
-    options.put("⬇️", (event, musicManager) -> musicManager.getDashboard().changePage(-1));
+    options.put("⏭️", (event, musicManager) -> {
+      musicManager.getScheduler().nextTrack();
+      musicManager.getDashboard().updateDashboard();
+    });
+    options.put("⬆️", (event, musicManager) -> musicManager.getDashboard().changePage(-1));
+    options.put("⬇️", (event, musicManager) -> musicManager.getDashboard().changePage(1));
     this.options = Collections.unmodifiableMap(options);
   }
 
@@ -49,14 +53,38 @@ public class MusicDashboardService {
     this.discord.getClient().getEventDispatcher().on(ReactionAddEvent.class)
       .flatMap(event -> Mono.zip(Mono.just(event), event.getGuild()))
       .subscribe(tuple -> this.handleReaction(tuple.getT1(), tuple.getT2()));
+
+    this.discord.getClient().getEventDispatcher().on(ReactionRemoveEvent.class)
+      .flatMap(event -> Mono.zip(Mono.just(event), event.getGuild()))
+      .subscribe(tuple -> this.handleReaction(tuple.getT1(), tuple.getT2()));
   }
 
-  private void playPause(final TrackScheduler scheduler) {
-    if (scheduler.isPlaying()) scheduler.pause();
-    else scheduler.resume();
+  private void playPause(final TrackScheduler scheduler, final MusicDashboard dashboard) {
+    if (scheduler.isPlaying()) {
+      scheduler.pause();
+      dashboard.updateDashboard();
+    } else if (scheduler.getCurrentTrack() != null) {
+      scheduler.resume();
+      dashboard.updateDashboard();
+    }
   }
 
   private void handleReaction(final ReactionAddEvent event, final Guild guild) {
+    if (event.getClient().getSelfId().equals(event.getUserId())) return;
+
+    final GuildMusicManager musicManager = this.musicService.getMusicManager(guild);
+    if (musicManager == null) return;
+
+    final Message message = musicManager.getDashboard().getMessage();
+
+    if (message == null || !event.getMessageId().equals(message.getId())) return;
+
+    event.getEmoji().asUnicodeEmoji()
+      .flatMap(emoji -> Optional.ofNullable(this.options.get(emoji.getRaw())))
+      .ifPresent(option -> option.execute(event, musicManager));
+  }
+
+  private void handleReaction(final ReactionRemoveEvent event, final Guild guild) {
     if (event.getClient().getSelfId().equals(event.getUserId())) return;
 
     final GuildMusicManager musicManager = this.musicService.getMusicManager(guild);

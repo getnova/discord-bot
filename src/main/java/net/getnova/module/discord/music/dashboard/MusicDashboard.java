@@ -15,9 +15,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class MusicDashboard {
@@ -72,7 +73,8 @@ public class MusicDashboard {
   }
 
   public void changePage(final int change) {
-    this.offset += change;
+    this.offset += change * PAGE_SIZE;
+    this.updateDashboard().subscribe();
   }
 
   public Mono<?> updateDashboard() {
@@ -129,13 +131,12 @@ public class MusicDashboard {
             + " [" + this.formatDuration(Duration.ofMillis(playingTrack.getPosition())) + "/"
             + this.formatDuration(Duration.ofMillis(playingTrack.getDuration())) + "]", false);
 
-      final AtomicInteger i = new AtomicInteger(1);
-
-      queue.stream().limit(size).forEach(audioTrack -> {
-        final AudioTrackInfo info = audioTrack.getInfo();
-        spec.addField(info.author, "**" + (i.getAndIncrement()) + ". [" + info.title + "](" + info.uri + ")** ("
+      final List<AudioTrack> collect = queue.stream().limit(size).collect(Collectors.toList());
+      for (int i = this.offset; i < collect.size(); i++) {
+        final AudioTrackInfo info = collect.get(i).getInfo();
+        spec.addField(info.author, "**" + (i + 1) + ". [" + info.title + "](" + info.uri + ")** ("
           + formatDuration(Duration.ofMillis(info.length)) + ")", false);
-      });
+      }
     };
   }
 
