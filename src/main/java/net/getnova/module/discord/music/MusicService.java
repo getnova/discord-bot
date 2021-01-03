@@ -3,7 +3,6 @@ package net.getnova.module.discord.music;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.channel.Channel;
@@ -64,9 +63,5 @@ public class MusicService {
     }
 
     return musicManager;
-  }
-
-  public synchronized GuildMusicManager getMusicManager(final Snowflake guildId) {
-    return this.musicManagers.get(guildId.asLong());
   }
 }
