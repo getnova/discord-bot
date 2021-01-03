@@ -1,15 +1,15 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Bootstrap" type="Application" factoryName="Application">
     <envs>
-      <env name="DEBUG" value="true"/>
+      <env name="DEBUG" value="true" />
     </envs>
-    <option name="INCLUDE_PROVIDED_SCOPE" value="true"/>
-    <option name="MAIN_CLASS_NAME" value="net.getnova.framework.boot.Bootstrap"/>
-    <module name="discord-bot.main"/>
-    <option name="PROGRAM_PARAMETERS" value="Discord"/>
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run"/>
+    <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
+    <option name="MAIN_CLASS_NAME" value="net.getnova.framework.boot.Bootstrap" />
+    <module name="discord-bot.main" />
+    <option name="PROGRAM_PARAMETERS" value="net.getnova.module.discord.Discord" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run" />
     <method v="2">
-      <option name="Make" enabled="true"/>
+      <option name="Make" enabled="true" />
     </method>
   </configuration>
 </component>
