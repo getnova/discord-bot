@@ -1,6 +1,7 @@
 package net.getnova.module.discord.music.dashboard;
 
 import discord4j.common.util.Snowflake;
+import discord4j.core.event.domain.message.MessageEvent;
 import discord4j.core.event.domain.message.ReactionAddEvent;
 import discord4j.core.event.domain.message.ReactionRemoveEvent;
 import discord4j.core.object.entity.Message;
@@ -52,11 +53,13 @@ public class MusicDashboardService {
   private void postConstruct() {
     this.discord.getClient().getEventDispatcher().on(ReactionAddEvent.class)
       .flatMap(event -> Mono.zip(Mono.just(event), Mono.justOrEmpty(event.getGuildId())))
-      .subscribe(tuple -> this.handleReaction(tuple.getT1(), tuple.getT2()));
+      .subscribe(tuple -> this.handleReaction(tuple.getT1(),
+        tuple.getT1().getEmoji(), tuple.getT1().getUserId(), tuple.getT1().getMessageId(), tuple.getT2()));
 
     this.discord.getClient().getEventDispatcher().on(ReactionRemoveEvent.class)
       .flatMap(event -> Mono.zip(Mono.just(event), Mono.justOrEmpty(event.getGuildId())))
-      .subscribe(tuple -> this.handleReaction(tuple.getT1(), tuple.getT2()));
+      .subscribe(tuple -> this.handleReaction(tuple.getT1(),
+        tuple.getT1().getEmoji(), tuple.getT1().getUserId(), tuple.getT1().getMessageId(), tuple.getT2()));
   }
 
   private void playPause(final TrackScheduler scheduler, final MusicDashboard dashboard) {
@@ -69,33 +72,19 @@ public class MusicDashboardService {
     }
   }
 
-  private void handleReaction(final ReactionAddEvent event, final Snowflake guildId) {
-    if (event.getClient().getSelfId().equals(event.getUserId())) return;
+  private void handleReaction(final MessageEvent event, final ReactionEmoji reactionEmoji,
+                              final Snowflake userId, final Snowflake messageId, final Snowflake guildId) {
+    if (event.getClient().getSelfId().equals(userId)) return;
 
     final GuildMusicManager musicManager = this.musicService.getMusicManager(guildId);
     if (musicManager == null) return;
 
     final Message message = musicManager.getDashboard().getMessage();
 
-    if (message == null || !event.getMessageId().equals(message.getId())) return;
+    if (message == null || !messageId.equals(message.getId())) return;
 
-    event.getEmoji().asUnicodeEmoji()
-      .flatMap(emoji -> Optional.ofNullable(this.options.get(emoji.getRaw())))
-      .ifPresent(option -> option.execute(event, musicManager));
-  }
-
-  private void handleReaction(final ReactionRemoveEvent event, final Snowflake guildId) {
-    if (event.getClient().getSelfId().equals(event.getUserId())) return;
-
-    final GuildMusicManager musicManager = this.musicService.getMusicManager(guildId);
-    if (musicManager == null) return;
-
-    final Message message = musicManager.getDashboard().getMessage();
-
-    if (message == null || !event.getMessageId().equals(message.getId())) return;
-
-    event.getEmoji().asUnicodeEmoji()
-      .flatMap(emoji -> Optional.ofNullable(this.options.get(emoji.getRaw())))
+    reactionEmoji.asUnicodeEmoji()
+      .flatMap(unicodeEmoji -> Optional.ofNullable(this.options.get(unicodeEmoji.getRaw())))
       .ifPresent(option -> option.execute(event, musicManager));
   }
 }
