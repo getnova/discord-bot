@@ -43,8 +43,11 @@ public class GuildMusicManager implements Disposable {
   }
 
   public Mono<Void> leave() {
-    return this.voiceConnection.disconnect()
-      .doOnNext(ignored -> this.voiceConnection = null);
+    if (this.voiceConnection != null) {
+      return this.voiceConnection.disconnect()
+        .doOnNext(ignored -> this.voiceConnection = null);
+    }
+    return Mono.empty();
   }
 
   public void setTextChannel(final TextChannel channel) {

@@ -65,6 +65,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     this.updateDashboard();
     if (!this.isPlaying()) {
+      // leave
       this.musicManager.leave().subscribe();
       this.musicManager.setVoiceChannel(null);
     }
@@ -75,6 +76,10 @@ public class TrackScheduler extends AudioEventAdapter {
       this.player.stopTrack();
       this.queue.clear();
       this.updateDashboard();
+
+      // leave
+      this.musicManager.leave().subscribe();
+      this.musicManager.setVoiceChannel(null);
     }
   }
 
