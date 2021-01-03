@@ -79,12 +79,19 @@ public class MusicDashboardService {
     final GuildMusicManager musicManager = this.musicService.getMusicManager(guildId);
     if (musicManager == null) return;
 
-    final Message message = musicManager.getDashboard().getMessage();
+    musicManager.getVoiceChannel()
+      .getVoiceStates()
+      .filter(state -> state.getUserId().equals(userId))
+      .count()
+      .filter(count -> count == 1)
+      .subscribe(ignored -> {
+        final Message message = musicManager.getDashboard().getMessage();
 
-    if (message == null || !messageId.equals(message.getId())) return;
+        if (message == null || !messageId.equals(message.getId())) return;
 
-    reactionEmoji.asUnicodeEmoji()
-      .flatMap(unicodeEmoji -> Optional.ofNullable(this.options.get(unicodeEmoji.getRaw())))
-      .ifPresent(option -> option.execute(event, musicManager));
+        reactionEmoji.asUnicodeEmoji()
+          .flatMap(unicodeEmoji -> Optional.ofNullable(this.options.get(unicodeEmoji.getRaw())))
+          .ifPresent(option -> option.execute(event, musicManager));
+      });
   }
 }
