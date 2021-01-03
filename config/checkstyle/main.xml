@@ -22,7 +22,7 @@
 
   <!-- Checks that a package-info.java file exists for each package.     -->
   <!-- See https://checkstyle.org/config_javadoc.html#JavadocPackage -->
-  <!--    <module name="JavadocPackage"/>-->
+  <!-- <module name="JavadocPackage"/> -->
 
   <!-- Checks whether files end with a new line.                        -->
   <!-- See https://checkstyle.org/config_misc.html#NewlineAtEndOfFile -->
@@ -58,9 +58,10 @@
     <!-- Checks for Javadoc comments.                     -->
     <!-- See https://checkstyle.org/config_javadoc.html -->
     <module name="InvalidJavadocPosition"/>
-    <!-- <module name="JavadocMethod"/> -->
+    <module name="JavadocMethod"/>
     <module name="JavadocType"/>
     <module name="JavadocStyle"/>
+    <!--        TEMPORALY -->
     <!--        <module name="MissingJavadocMethod"/>-->
 
     <!-- Checks for Naming Conventions.                  -->
@@ -126,7 +127,7 @@
 
     <!-- Checks for class design                         -->
     <!-- See https://checkstyle.org/config_design.html -->
-    <module name="DesignForExtension"/>
+    <!-- <module name="DesignForExtension"/> -->
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>

@@ -1,23 +1,23 @@
-FROM adoptopenjdk:15-jre-hotspot
+FROM adoptopenjdk:15-jre-hotspot-bionic
 
-ARG BOT_USER=nova-bot
-ARG BOT_GROUP=nova-bot
+ARG NOVA_USER=nova
+ARG NOVA_GROUP=nova
 
-ENV BOT_HOME /opt/nova-bot
+ENV NOVA_HOME /opt/discord-bot
 ENV DATA_DIR /data
 
 RUN set -o errexit -o nounset \
-    && groupadd --system --gid 1000 ${BOT_GROUP} \
-    && useradd --system --gid ${BOT_GROUP} --uid 1000 --shell /bin/bash --create-home ${BOT_USER} \
+    && groupadd --system --gid 1000 ${NOVA_GROUP} \
+    && useradd --system --gid ${NOVA_GROUP} --uid 1000 --shell /bin/bash --create-home ${NOVA_USER} \
     && mkdir -p ${DATA_DIR} \
-    && chown --recursive ${BOT_USER}:${BOT_GROUP} ${DATA_DIR} \
-    && chown --recursive ${BOT_USER}:${BOT_GROUP} /home/${BOT_USER}
+    && chown --recursive ${NOVA_USER}:${NOVA_GROUP} ${DATA_DIR} \
+    && chown --recursive ${NOVA_USER}:${NOVA_GROUP} /home/${NOVA_USER}
 
 WORKDIR ${DATA_DIR}
-COPY --chown=${BOT_USER}:${BOT_GROUP} ./build/install/discord-bot/ ${BOT_HOME}/
+COPY --chown=${NOVA_USER}:${NOVA_GROUP} ./discord-bot/ ${NOVA_HOME}/
 
-RUN ln --symbolic ${BOT_HOME}/bin/discord-bot /usr/bin/nova-bot \
-  && chmod +x /usr/bin/nova-bot
-USER ${BOT_USER}
+RUN ln --symbolic ${NOVA_HOME}/bin/discord-bot /usr/bin/discord-bot \
+  && chmod +x /usr/bin/discord-bot
+USER ${NOVA_USER}
 
-ENTRYPOINT ["nova-bot", "Discord"]
+ENTRYPOINT ["discord-bot"]
