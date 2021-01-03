@@ -1,8 +1,8 @@
 package net.getnova.module.discord.music.dashboard;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.ReactionAddEvent;
 import discord4j.core.event.domain.message.ReactionRemoveEvent;
-import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.reaction.ReactionEmoji;
 import javax.annotation.PostConstruct;
@@ -51,11 +51,11 @@ public class MusicDashboardService {
   @PostConstruct
   private void postConstruct() {
     this.discord.getClient().getEventDispatcher().on(ReactionAddEvent.class)
-      .flatMap(event -> Mono.zip(Mono.just(event), event.getGuild()))
+      .flatMap(event -> Mono.zip(Mono.just(event), Mono.justOrEmpty(event.getGuildId())))
       .subscribe(tuple -> this.handleReaction(tuple.getT1(), tuple.getT2()));
 
     this.discord.getClient().getEventDispatcher().on(ReactionRemoveEvent.class)
-      .flatMap(event -> Mono.zip(Mono.just(event), event.getGuild()))
+      .flatMap(event -> Mono.zip(Mono.just(event), Mono.justOrEmpty(event.getGuildId())))
       .subscribe(tuple -> this.handleReaction(tuple.getT1(), tuple.getT2()));
   }
 
@@ -69,10 +69,10 @@ public class MusicDashboardService {
     }
   }
 
-  private void handleReaction(final ReactionAddEvent event, final Guild guild) {
+  private void handleReaction(final ReactionAddEvent event, final Snowflake guildId) {
     if (event.getClient().getSelfId().equals(event.getUserId())) return;
 
-    final GuildMusicManager musicManager = this.musicService.getMusicManager(guild);
+    final GuildMusicManager musicManager = this.musicService.getMusicManager(guildId);
     if (musicManager == null) return;
 
     final Message message = musicManager.getDashboard().getMessage();
@@ -84,10 +84,10 @@ public class MusicDashboardService {
       .ifPresent(option -> option.execute(event, musicManager));
   }
 
-  private void handleReaction(final ReactionRemoveEvent event, final Guild guild) {
+  private void handleReaction(final ReactionRemoveEvent event, final Snowflake guildId) {
     if (event.getClient().getSelfId().equals(event.getUserId())) return;
 
-    final GuildMusicManager musicManager = this.musicService.getMusicManager(guild);
+    final GuildMusicManager musicManager = this.musicService.getMusicManager(guildId);
     if (musicManager == null) return;
 
     final Message message = musicManager.getDashboard().getMessage();
