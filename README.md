@@ -39,6 +39,35 @@ git clone https://github.com/getnova/discord-bot
 
 Then you can open it with you IDE and start contributing.
 
+### Deployment
+```yaml
+version: "3.9"
+
+services:
+
+  discord-bot:
+    image: getnova/discord-bot:latest
+    restart: always
+    environment:
+      - "DEBUG=true"
+      - "SQL_SERVER_LOCATION=postgresql://database:5432"
+      - "SQL_SERVER_PASSWORD=nova"
+      - "SQL_SERVER_USERNAME=nova"
+      - "SQL_SERVER_DATABASE=nova"
+      - "DISCORD_BOT_TOKEN=<Your-Bot-Token>"
+
+  database:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - "POSTGRES_PASSWORD=nova"
+      - "POSTGRES_USER=nova"
+      - "POSTGRES_DB=nova"
+      - "PGDATA=/var/lib/postgresql/data"
+    volumes:
+      - "./db-data:/var/lib/postgresql/data"
+```
+
 ## Built With
 
 * [Gradle](https://gradle.org/) - The build tool
