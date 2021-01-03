@@ -40,7 +40,9 @@ git clone https://github.com/getnova/discord-bot
 Then you can open it with you IDE and start contributing.
 
 ### Deployment
+
 ```yaml
+# docker-compose.yaml
 version: "3.9"
 
 services:
