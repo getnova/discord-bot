@@ -56,7 +56,7 @@ public class CommandService {
         .flatMap(message -> Mono.zip(event.getMessage().delete(), message.delete()).delaySubscription(Duration.ofSeconds(10)))
         .doOnError(cause -> {
           if (cause.getMessage() == null || !cause.getMessage().contains("Unknown Message")) {
-            log.error("Unable to delete \"Command not found\" message.", cause);
+            log.error("Unable to delete message.", cause);
           }
         })
         .subscribe();
