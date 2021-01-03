@@ -10,11 +10,12 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.module.discord.music.dashboard.MusicDashboard;
 import net.getnova.module.discord.music.dashboard.MusicDashboardService;
+import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Getter
-public class GuildMusicManager {
+public class GuildMusicManager implements Disposable {
 
   private final AudioPlayer player;
   private final TrackScheduler scheduler;
@@ -48,5 +49,15 @@ public class GuildMusicManager {
 
   public void setTextChannel(final TextChannel channel) {
     this.dashboard.initDashboard(channel);
+  }
+
+  @Override
+  public void dispose() {
+    this.dashboard.dispose();
+  }
+
+  @Override
+  public boolean isDisposed() {
+    return this.dashboard.isDisposed();
   }
 }
