@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
+import discord4j.core.event.domain.guild.GuildDeleteEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -43,6 +44,13 @@ public class MusicService {
       .doOnNext(this::getMusicManager)
       .thenMany(this.discord.getClient().getEventDispatcher().on(GuildCreateEvent.class))
       .subscribe(event -> this.getMusicManager(event.getGuild()));
+
+    // Cleanup guilds
+    this.discord.getClient().on(GuildDeleteEvent.class)
+      .doOnNext(event -> {
+        this.musicManagers.get(event.getGuildId().asLong()).dispose();
+        this.musicManagers.remove(event.getGuildId().asLong());
+      }).subscribe();
   }
 
   public synchronized GuildMusicManager getMusicManager(final Guild guild) {

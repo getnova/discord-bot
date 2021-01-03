@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.module.discord.music.GuildMusicManager;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,12 +22,14 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class MusicDashboard {
+public class MusicDashboard implements Disposable {
 
   private static final int PAGE_SIZE = 10;
 
   private final GuildMusicManager musicManager;
   private final MusicDashboardService dashboardService;
+
+  private final Disposable updating;
 
   private int offset;
   private TextChannel channel;
@@ -39,9 +42,9 @@ public class MusicDashboard {
     this.offset = 0;
 
     // Updating the dashboard every 10 seconds and starting after 10 seconds.
-    Flux.interval(Duration.ofSeconds(10), Duration.ofSeconds(10))
+    this.updating = Flux.interval(Duration.ofSeconds(10), Duration.ofSeconds(10))
       .flatMap(ignored -> this.updateDashboard())
-      .subscribe(); // TODO: Stop when Dashboard is destroyed: e.g. if the bot leaves a server
+      .subscribe();
   }
 
   public void initDashboard(final TextChannel channel) {
@@ -157,5 +160,15 @@ public class MusicDashboard {
       (absSeconds % 3600) / 60,
       absSeconds % 60);
     return seconds < 0 ? "-" + positive : positive;
+  }
+
+  @Override
+  public void dispose() {
+    this.updating.dispose();
+  }
+
+  @Override
+  public boolean isDisposed() {
+    return this.updating.isDisposed();
   }
 }
