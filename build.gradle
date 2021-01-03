@@ -9,7 +9,7 @@ plugins {
 
 group('net.getnova.module')
 version(version.toString().startsWith('v') ? version.toString().substring(1) : version)
-version(version.toString() == 'master-SNAPSHOT' ? "edge" : version)
+version(version.toString() == 'main-SNAPSHOT' ? "edge" : version)
 
 apply(from: "${rootDir}/gradle/java.gradle")
 apply(from: "${rootDir}/gradle/lombok.gradle")
