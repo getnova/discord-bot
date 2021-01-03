@@ -42,6 +42,11 @@ public class CommandService {
   private void messageCreated(final MessageCreateEvent event) {
     final String rawContent = event.getMessage().getContent().substring(this.prefixLength);
     final String[] content = Arrays.stream(rawContent.split("[ \t\n\r\f]")).filter(entry -> !entry.isBlank()).toArray(String[]::new);
+
+    if (content.length == 0) {
+      return;
+    }
+
     final Command command = this.commands.get(content[0]);
 
     if (command == null) {
