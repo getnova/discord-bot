@@ -8,9 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
 
-/**
- * FIXME: Not working...
- */
 @Slf4j
 public class D4jAudioProvider extends AudioProvider {
 
