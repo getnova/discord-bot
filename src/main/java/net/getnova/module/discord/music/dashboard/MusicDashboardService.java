@@ -31,7 +31,7 @@ public class MusicDashboardService {
     this.musicService = musicService;
 
     final LinkedHashMap<String, MusicDashboardReactionOption> options = new LinkedHashMap<>();
-    options.put("⏯️", (event, musicManager) -> this.playPause(musicManager.getScheduler()));
+    options.put("⏯️", (event, musicManager) -> this.playPause(musicManager.getScheduler(), musicManager.getDashboard()));
     options.put("⏹️", (event, musicManager) -> musicManager.getScheduler().stop());
     options.put("⏭️", (event, musicManager) -> {
       musicManager.getScheduler().nextTrack();

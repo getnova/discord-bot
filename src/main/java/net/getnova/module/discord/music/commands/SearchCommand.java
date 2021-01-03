@@ -14,7 +14,7 @@ public class SearchCommand extends MusicCommand {
 
   private final AudioPlayerManager playerManager;
 
-  public SearchCommand(MusicService musicService) {
+  public SearchCommand(final MusicService musicService) {
     super("search", "Searches on YouTube for the given keyword(s).", musicService);
     this.playerManager = musicService.getPlayerManager();
   }

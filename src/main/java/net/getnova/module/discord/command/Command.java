@@ -12,5 +12,5 @@ public abstract class Command {
   private final String id;
   private final String description;
 
-  public abstract Mono<?> execute(final String[] args, MessageCreateEvent event);
+  public abstract Mono<?> execute(String[] args, MessageCreateEvent event);
 }

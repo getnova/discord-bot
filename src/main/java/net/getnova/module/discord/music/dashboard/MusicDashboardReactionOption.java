@@ -5,5 +5,5 @@ import net.getnova.module.discord.music.GuildMusicManager;
 
 public interface MusicDashboardReactionOption {
 
-  void execute(final MessageEvent event, final GuildMusicManager musicManager);
+  void execute(MessageEvent event, GuildMusicManager musicManager);
 }

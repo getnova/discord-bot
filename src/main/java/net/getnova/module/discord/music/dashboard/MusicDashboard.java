@@ -124,8 +124,8 @@ public class MusicDashboard {
       spec.setTitle("Music :small_orange_diamond: Playlist with " + (queue.size() + 1) + " items")
         .setDescription("Here you can always see the state of the music that is currently being played.")
         .setColor(Color.of(0x00ED9728))
-        .addField("Now playing", "**[" + playingTrack.getInfo().title + "](" +
-          playingTrack.getInfo().uri + ")** by " + playingTrack.getInfo().author, false)
+        .addField("Now playing", "**[" + playingTrack.getInfo().title + "]("
+          + playingTrack.getInfo().uri + ")** by " + playingTrack.getInfo().author, false)
         .addField("Progress" + (this.musicManager.getPlayer().isPaused() ? " (paused)" : ""),
           "\u25AC".repeat(Math.max(0, x - 1)) + ":white_circle:" + "\u25AC".repeat(Math.max(0, 19 - x))
             + " [" + this.formatDuration(Duration.ofMillis(playingTrack.getPosition())) + "/"
