@@ -73,7 +73,10 @@ public class MusicDashboard {
   }
 
   public void changePage(final int change) {
-    this.offset += change * PAGE_SIZE;
+    int newValue = this.offset + change * PAGE_SIZE;
+    if (newValue >= 0 && newValue - PAGE_SIZE <= this.musicManager.getScheduler().getQueue().size()) {
+      this.offset = newValue;
+    }
     this.updateDashboard().subscribe();
   }
 
@@ -81,23 +84,21 @@ public class MusicDashboard {
     if (this.channel == null || this.message == null) return Mono.empty();
 
     return this.message.edit(spec -> spec.setEmbed(this.render()))
-      .doOnError(
-        cause -> {
-          if (cause.getMessage() == null || !cause.getMessage().contains("Unknown Message")) {
-            log.error("Unable to update dashboard.");
-            return;
-          }
-
-          /* this.message was deleted */
-          this.channel.createEmbed(this.render())
-            .flatMap(message -> {
-              this.message = message;
-              this.dashboardService.createReactions(this.message);
-              return this.clean();
-            })
-            .subscribe();
+      .doOnError(cause -> {
+        if (cause.getMessage() == null || !cause.getMessage().contains("Unknown Message")) {
+          log.error("Unable to update dashboard.", cause);
+          return;
         }
-      );
+
+        /* this.message was deleted */
+        this.channel.createEmbed(this.render())
+          .flatMap(message -> {
+            this.message = message;
+            this.dashboardService.createReactions(this.message);
+            return this.clean();
+          })
+          .subscribe();
+      });
   }
 
   private Consumer<? super EmbedCreateSpec> render() {
@@ -115,6 +116,14 @@ public class MusicDashboard {
   }
 
   private Consumer<? super EmbedCreateSpec> playlist() {
+    // Fix to bug offset:
+    //  If the player removed tracks witch are played
+    //  the list shrinks and the offset is to big
+    if (this.offset - PAGE_SIZE <= this.musicManager.getScheduler().getQueue().size()) {
+      this.offset += PAGE_SIZE;
+    }
+
+    // Render Dashboard
     final BlockingQueue<AudioTrack> queue = this.musicManager.getScheduler().getQueue();
     final AudioTrack playingTrack = this.musicManager.getPlayer().getPlayingTrack();
     int x = (int) (((double) playingTrack.getPosition() / playingTrack.getDuration()) * 20);

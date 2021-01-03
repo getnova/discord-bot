@@ -32,11 +32,11 @@ public class MusicDashboardService {
 
     final LinkedHashMap<String, MusicDashboardReactionOption> options = new LinkedHashMap<>();
     options.put("⏯️", (event, musicManager) -> this.playPause(musicManager.getScheduler(), musicManager.getDashboard()));
-    options.put("⏹️", (event, musicManager) -> musicManager.getScheduler().stop());
     options.put("⏭️", (event, musicManager) -> {
       musicManager.getScheduler().nextTrack();
       musicManager.getDashboard().updateDashboard();
     });
+    options.put("⏹️", (event, musicManager) -> musicManager.getScheduler().stop());
     options.put("⬆️", (event, musicManager) -> musicManager.getDashboard().changePage(-1));
     options.put("⬇️", (event, musicManager) -> musicManager.getDashboard().changePage(1));
     this.options = Collections.unmodifiableMap(options);
@@ -63,7 +63,7 @@ public class MusicDashboardService {
     if (scheduler.isPlaying()) {
       scheduler.pause();
       dashboard.updateDashboard();
-    } else if (scheduler.getCurrentTrack() != null) {
+    } else if (scheduler.isPaused()) {
       scheduler.resume();
       dashboard.updateDashboard();
     }

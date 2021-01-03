@@ -20,27 +20,20 @@ public class TrackScheduler extends AudioEventAdapter {
   @Getter(AccessLevel.NONE)
   private final AudioPlayer player;
   private final BlockingQueue<AudioTrack> queue;
-  private AudioTrack currentTrack;
-  private long pausePosition;
-  private boolean playing;
 
   public TrackScheduler(final GuildMusicManager musicManager) {
     this.musicManager = musicManager;
     this.player = musicManager.getPlayer();
     this.queue = new LinkedBlockingQueue<>();
-    this.currentTrack = null;
-    this.pausePosition = -1;
-    this.playing = false;
   }
 
   public void queue(final AudioTrack track) {
     this.queue.offer(track);
     this.checkConnection()
       .subscribe(connection -> {
-        if (!this.playing) {
-          this.currentTrack = this.queue.poll();
-          this.player.startTrack(this.currentTrack, true);
-          this.playing = true;
+        if (!this.isPlaying()) {
+          this.player.startTrack(this.cloneTrack(this.queue.poll()), true);
+          this.updateDashboard();
         }
       });
   }
@@ -49,15 +42,17 @@ public class TrackScheduler extends AudioEventAdapter {
     tracks.forEach(this.queue::offer);
     this.checkConnection()
       .subscribe(connection -> {
-        if (!this.playing) {
+        if (!this.isPlaying()) {
+          AudioTrack track;
+
           if (selected != null) {
-            this.currentTrack = selected;
+            track = selected;
             this.queue.remove(selected);
           } else {
-            this.currentTrack = this.queue.poll();
+            track = this.queue.poll();
           }
-          this.player.startTrack(this.currentTrack, true);
-          this.playing = true;
+          this.player.startTrack(this.cloneTrack(track), true);
+          this.updateDashboard();
         }
       });
   }
@@ -65,35 +60,35 @@ public class TrackScheduler extends AudioEventAdapter {
   public void nextTrack() {
     // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
     // giving null to startTrack, which is a valid argument and will simply stop the player.
-    this.currentTrack = this.queue.poll();
-    this.player.startTrack(this.currentTrack, false);
-    this.musicManager.getDashboard().updateDashboard().subscribe();
+    final AudioTrack track = this.queue.poll();
+    this.player.startTrack(this.cloneTrack(track), false);
 
-    this.playing = this.currentTrack != null;
-    if (!this.playing) {
+    this.updateDashboard();
+    if (!this.isPlaying()) {
       this.musicManager.leave().subscribe();
       this.musicManager.setVoiceChannel(null);
     }
   }
 
   public void stop() {
-    if (this.isPlaying()) this.player.stopTrack();
-    this.currentTrack = null;
-    this.pausePosition = -1;
+    if (this.isPlaying()) {
+      this.player.stopTrack();
+      this.queue.clear();
+      this.updateDashboard();
+    }
   }
 
   public void resume() {
     if (this.isPlaying()) throw new IllegalStateException("Currently playing");
-    if (this.currentTrack == null) throw new IllegalStateException("Nothing queued");
-    this.player.startTrack(this.currentTrack, false);
-    this.player.getPlayingTrack().setPosition(this.pausePosition);
-    this.pausePosition = -1;
+    if (this.player.getPlayingTrack() == null) throw new IllegalStateException("No track paused");
+    this.player.setPaused(false);
+    this.updateDashboard();
   }
 
   public void pause() {
     if (!this.isPlaying()) throw new IllegalStateException("Nothing playing");
-    this.pausePosition = this.player.getPlayingTrack().getPosition();
-    this.player.stopTrack();
+    this.player.setPaused(true);
+    this.updateDashboard();
   }
 
   private Mono<VoiceConnection> checkConnection() {
@@ -108,5 +103,21 @@ public class TrackScheduler extends AudioEventAdapter {
     if (endReason.mayStartNext) {
       this.nextTrack();
     }
+  }
+
+  private AudioTrack cloneTrack(final AudioTrack track) {
+    return track == null ? null : track.makeClone();
+  }
+
+  public boolean isPlaying() {
+    return this.player.getPlayingTrack() != null && !this.player.isPaused();
+  }
+
+  public boolean isPaused() {
+    return this.player.isPaused();
+  }
+
+  private void updateDashboard() {
+    this.musicManager.getDashboard().updateDashboard().subscribe();
   }
 }
