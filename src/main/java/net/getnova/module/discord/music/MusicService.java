@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import discord4j.common.util.Snowflake;
+import discord4j.core.event.domain.VoiceStateUpdateEvent;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.GuildDeleteEvent;
 import discord4j.core.object.entity.Guild;
@@ -16,6 +17,7 @@ import net.getnova.module.discord.music.dashboard.MusicDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,10 +50,18 @@ public class MusicService {
 
     // Cleanup guilds
     this.discord.getClient().on(GuildDeleteEvent.class)
-      .doOnNext(event -> {
+      .subscribe(event -> {
         this.musicManagers.get(event.getGuildId().asLong()).dispose();
         this.musicManagers.remove(event.getGuildId().asLong());
-      }).subscribe();
+      });
+
+    this.discord.getClient().on(VoiceStateUpdateEvent.class)
+      .map(state -> this.getMusicManager(state.getCurrent().getGuildId()))
+      .filter(manager -> manager.getVoiceChannel() != null)
+      .flatMap(manager -> Mono.zip(Mono.just(manager), manager.getVoiceChannel().getVoiceStates().count()))
+      .subscribe(tuple -> {
+        if (tuple.getT2() == 1) tuple.getT1().getScheduler().stop();
+      });
   }
 
   public synchronized GuildMusicManager getMusicManager(final Guild guild) {
