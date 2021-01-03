@@ -6,7 +6,7 @@
         <img alt="Releases" src="https://img.shields.io/github/v/tag/getnova/discord-bot?label=latest%20version&style=flat-square">
     </a>
     <a style="text-decoration:none" href="https://github.com/getnova/discord-bot/actions">
-        <img alt="build" src="https://img.shields.io/github/workflow/status/getnova/discord-bot/Build?label=build&style=flat-square">
+        <img alt="build" src="https://img.shields.io/github/workflow/status/getnova/discord-bot/CI?label=build&style=flat-square">
     </a>
     <a style="text-decoration:none" href="https://hub.docker.com/r/getnova/discord-bot">
         <img alt="DockerHub" src="https://img.shields.io/docker/pulls/getnova/discord-bot?style=flat-square">
