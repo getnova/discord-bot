@@ -5,6 +5,7 @@ import discord4j.core.object.VoiceState;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.VoiceChannel;
+import discord4j.rest.util.Permission;
 import net.getnova.module.discord.command.Command;
 import net.getnova.module.discord.music.GuildMusicManager;
 import net.getnova.module.discord.music.MusicService;
@@ -36,6 +37,13 @@ public abstract class MusicCommand extends Command {
     if (musicManager.getVoiceChannel() != null && !musicManager.getVoiceChannel().equals(channel)) {
       return message.edit(spec -> spec.setContent("This bot is already used in another channel."));
     }
+
+    if (!channel.getOverwriteForMember(message.getClient().getSelfId())
+      .map(permission -> !permission.getDenied().contains(Permission.CONNECT) && permission.getAllowed().contains(Permission.CONNECT))
+      .orElse(true)) {
+      return message.edit(spec -> spec.setContent("403 Forbidden: I don't have permission to join your channel."));
+    }
+
     return null;
   }
 }
