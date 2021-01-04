@@ -70,6 +70,14 @@ services:
       - "./db-data:/var/lib/postgresql/data"
 ```
 
+## Environment
+| Name                 | Default Value | Description                                                                                                 |
+|----------------------|---------------|-------------------------------------------------------------------------------------------------------------|
+| `DISCORD_BOT_TOKEN`  |               | The discord bot token; you can obtain one here: [discord.com/developers](https://discord.com/developers)    |
+| `DISCORD_BOT_PREFIX` | `!`           | The prefix witch is in every message that should be interpreted as a bot command.                           |
+
+See [getnova/nova-frontend#environment](https://github.com/getnova/nova-framework#environment)
+
 ## Built With
 
 * [Gradle](https://gradle.org/) - The build tool
