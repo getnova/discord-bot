@@ -1,6 +1,7 @@
 repositories {
-  maven { url('https://dl.bintray.com/getnova/maven') }
+  mavenCentral()
   jcenter()
+  maven { url('https://dl.bintray.com/getnova/maven') }
 }
 
 jar {
