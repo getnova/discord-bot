@@ -6,10 +6,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import discord4j.core.object.entity.Message;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -53,7 +52,8 @@ public class ResultHandler implements AudioLoadResultHandler {
   @Override
   public void loadFailed(final FriendlyException exception) {
     if (exception.getMessage().equals("Received unexpected response from YouTube.")) {
-      this.message.edit(spec -> spec.setContent("Received unexpected response from YouTube. Please try again.")).subscribe();
+      this.message.edit(spec -> spec.setContent("Received unexpected response from YouTube. Please try again."))
+        .subscribe();
       return;
     }
 

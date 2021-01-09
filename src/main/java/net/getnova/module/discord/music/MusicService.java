@@ -10,6 +10,8 @@ import discord4j.core.event.domain.guild.GuildDeleteEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import net.getnova.module.discord.Discord;
@@ -18,9 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class MusicService {
@@ -60,7 +59,9 @@ public class MusicService {
       .filter(manager -> manager.getVoiceChannel() != null)
       .flatMap(manager -> Mono.zip(Mono.just(manager), manager.getVoiceChannel().getVoiceStates().count()))
       .subscribe(tuple -> {
-        if (tuple.getT2() == 1) tuple.getT1().getScheduler().stop();
+        if (tuple.getT2() == 1) {
+          tuple.getT1().getScheduler().stop();
+        }
       });
   }
 

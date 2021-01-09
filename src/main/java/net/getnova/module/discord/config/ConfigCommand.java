@@ -18,11 +18,16 @@ public class ConfigCommand extends Command {
 
   @Override
   public Mono<?> execute(final String[] args, final MessageCreateEvent event) {
-    if (args.length == 1 && args[0].equalsIgnoreCase("list")) return this.list(event);
-    else if (args.length == 2 && args[0].equalsIgnoreCase("reset")) return this.reset(event, args[1]);
-    else if (args.length == 3 && args[0].equalsIgnoreCase("set")) return this.set(event, args[1], args[2]);
-    else
-      return event.getMessage().getChannel().flatMap(channel -> channel.createMessage("Invalid Syntax: list | reset <key> | set <key> <value>"));
+    if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
+      return this.list(event);
+    } else if (args.length == 2 && args[0].equalsIgnoreCase("reset")) {
+      return this.reset(event, args[1]);
+    } else if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
+      return this.set(event, args[1], args[2]);
+    } else {
+      return event.getMessage().getChannel()
+        .flatMap(channel -> channel.createMessage("Invalid Syntax: list | reset <key> | set <key> <value>"));
+    }
   }
 
   private Mono<Message> list(final MessageCreateEvent event) {

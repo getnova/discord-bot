@@ -4,9 +4,8 @@ import com.sedmelluq.discord.lavaplayer.format.StandardAudioDataFormats;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
 import discord4j.voice.AudioProvider;
-import lombok.extern.slf4j.Slf4j;
-
 import java.nio.ByteBuffer;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class D4jAudioProvider extends AudioProvider {
@@ -24,7 +23,9 @@ public class D4jAudioProvider extends AudioProvider {
   @Override
   public boolean provide() {
     final boolean didProvide = this.player.provide(this.frame);
-    if (didProvide) this.getBuffer().flip();
+    if (didProvide) {
+      this.getBuffer().flip();
+    }
     return didProvide;
   }
 }

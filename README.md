@@ -39,6 +39,10 @@ git clone https://github.com/getnova/discord-bot
 
 Then you can open it with you IDE and start contributing.
 
+#### Code Style
+
+* [IntelliJ Google Code Style](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml)
+
 ### Deployment
 
 ```yaml
@@ -71,6 +75,7 @@ services:
 ```
 
 ## Environment
+
 | Name                 | Default Value | Description                                                                                                 |
 |----------------------|---------------|-------------------------------------------------------------------------------------------------------------|
 | `DISCORD_BOT_TOKEN`  |               | The discord bot token; you can obtain one here: [discord.com/developers](https://discord.com/developers)    |

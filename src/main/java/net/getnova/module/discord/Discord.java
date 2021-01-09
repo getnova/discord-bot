@@ -2,6 +2,7 @@ package net.getnova.module.discord;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
+import java.time.Duration;
 import javax.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +12,6 @@ import net.getnova.framework.jpa.JpaModule;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.time.Duration;
 
 @Slf4j
 @Module(JpaModule.class)
@@ -28,7 +27,8 @@ public class Discord {
 
   public Discord(final Bootstrap bootstrap, final DiscordConfig config) {
     if (config.getToken().isBlank()) {
-      log.error("Please provide a valid Discord Bot Token. You can create or retrieve a token here: https://discord.com/developers");
+      log.error(
+        "Please provide a valid Discord Bot Token. You can create or retrieve a token here: https://discord.com/developers");
       bootstrap.shutdown();
       return;
     }

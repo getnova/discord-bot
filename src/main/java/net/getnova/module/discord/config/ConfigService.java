@@ -1,14 +1,13 @@
 package net.getnova.module.discord.config;
 
 import discord4j.core.object.entity.Guild;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 @Service
 public class ConfigService {
@@ -22,7 +21,8 @@ public class ConfigService {
     this.configValueRepository = configValueRepository;
   }
 
-  public ConfigEntry addKey(final String key, final String description, final String defaultValue, final BiConsumer<Guild, String> callback) {
+  public ConfigEntry addKey(final String key, final String description, final String defaultValue,
+    final BiConsumer<Guild, String> callback) {
     final ConfigEntry entry = new ConfigEntry(description, defaultValue, callback);
     this.values.put(key, entry);
     return entry;
@@ -30,7 +30,9 @@ public class ConfigService {
 
   public boolean setValue(final Guild guild, final String key, final String value) {
     final ConfigEntry configEntry = this.values.get(key);
-    if (configEntry == null) return false;
+    if (configEntry == null) {
+      return false;
+    }
 
     final long guildId = guild.getId().asLong();
     final ConfigValue.Key id = new ConfigValue.Key(guildId, key);
@@ -41,8 +43,9 @@ public class ConfigService {
     } else {
       configEntry.getCallback().accept(guild, value);
       final ConfigValue configValue = this.configValueRepository.findById(id).orElse(null);
-      if (configValue == null) this.configValueRepository.save(new ConfigValue(guildId, key, value));
-      else {
+      if (configValue == null) {
+        this.configValueRepository.save(new ConfigValue(guildId, key, value));
+      } else {
         configValue.setValue(value);
         this.configValueRepository.save(configValue);
       }
@@ -53,10 +56,14 @@ public class ConfigService {
 
   public String getValue(final Guild guild, final String key) {
     final ConfigEntry configEntry = this.values.get(key);
-    if (configEntry == null) return null;
+    if (configEntry == null) {
+      return null;
+    }
 
-    final ConfigValue configValue = this.configValueRepository.findById(new ConfigValue.Key(guild.getId().asLong(), key)).orElse(null);
-    return configValue == null ? null : configValue.getValue() == null ? configEntry.getDefaultValue() : configValue.getValue();
+    final ConfigValue configValue = this.configValueRepository
+      .findById(new ConfigValue.Key(guild.getId().asLong(), key)).orElse(null);
+    return configValue == null ? null
+      : configValue.getValue() == null ? configEntry.getDefaultValue() : configValue.getValue();
   }
 
   @Data

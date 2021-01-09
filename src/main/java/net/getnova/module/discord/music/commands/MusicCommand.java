@@ -33,13 +33,15 @@ public abstract class MusicCommand extends Command {
     return Mono.zip(messageMono, guildMono, channelMono);
   }
 
-  protected Mono<Message> checkChannel(final Message message, final GuildMusicManager musicManager, final VoiceChannel channel) {
+  protected Mono<Message> checkChannel(final Message message, final GuildMusicManager musicManager,
+    final VoiceChannel channel) {
     if (musicManager.getVoiceChannel() != null && !musicManager.getVoiceChannel().equals(channel)) {
       return message.edit(spec -> spec.setContent("This bot is already used in another channel."));
     }
 
     if (!channel.getOverwriteForMember(message.getClient().getSelfId())
-      .map(permission -> !permission.getDenied().contains(Permission.CONNECT) && permission.getAllowed().contains(Permission.CONNECT))
+      .map(permission -> !permission.getDenied().contains(Permission.CONNECT) && permission.getAllowed()
+        .contains(Permission.CONNECT))
       .orElse(true)) {
       return message.edit(spec -> spec.setContent("403 Forbidden: I don't have permission to join your channel."));
     }

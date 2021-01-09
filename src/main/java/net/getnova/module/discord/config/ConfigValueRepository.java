@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConfigValueRepository extends JpaRepository<ConfigValue, ConfigValue.Key> {
+
 }

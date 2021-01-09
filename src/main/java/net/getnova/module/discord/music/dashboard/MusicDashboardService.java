@@ -6,6 +6,10 @@ import discord4j.core.event.domain.message.ReactionAddEvent;
 import discord4j.core.event.domain.message.ReactionRemoveEvent;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.reaction.ReactionEmoji;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import javax.annotation.PostConstruct;
 import net.getnova.module.discord.Discord;
 import net.getnova.module.discord.music.GuildMusicManager;
@@ -14,11 +18,6 @@ import net.getnova.module.discord.music.TrackScheduler;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class MusicDashboardService {
@@ -32,7 +31,8 @@ public class MusicDashboardService {
     this.musicService = musicService;
 
     final LinkedHashMap<String, MusicDashboardReactionOption> options = new LinkedHashMap<>();
-    options.put("⏯️", (event, musicManager) -> this.playPause(musicManager.getScheduler(), musicManager.getDashboard()));
+    options
+      .put("⏯️", (event, musicManager) -> this.playPause(musicManager.getScheduler(), musicManager.getDashboard()));
     options.put("⏭️", (event, musicManager) -> {
       musicManager.getScheduler().nextTrack();
       musicManager.getDashboard().updateDashboard();
@@ -73,11 +73,15 @@ public class MusicDashboardService {
   }
 
   private void handleReaction(final MessageEvent event, final ReactionEmoji reactionEmoji,
-                              final Snowflake userId, final Snowflake messageId, final Snowflake guildId) {
-    if (event.getClient().getSelfId().equals(userId)) return;
+    final Snowflake userId, final Snowflake messageId, final Snowflake guildId) {
+    if (event.getClient().getSelfId().equals(userId)) {
+      return;
+    }
 
     final GuildMusicManager musicManager = this.musicService.getMusicManager(guildId);
-    if (musicManager == null) return;
+    if (musicManager == null) {
+      return;
+    }
 
     musicManager.getVoiceChannel()
       .getVoiceStates()
@@ -87,7 +91,9 @@ public class MusicDashboardService {
       .subscribe(ignored -> {
         final Message message = musicManager.getDashboard().getMessage();
 
-        if (message == null || !messageId.equals(message.getId())) return;
+        if (message == null || !messageId.equals(message.getId())) {
+          return;
+        }
 
         reactionEmoji.asUnicodeEmoji()
           .flatMap(unicodeEmoji -> Optional.ofNullable(this.options.get(unicodeEmoji.getRaw())))

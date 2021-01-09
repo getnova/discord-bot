@@ -27,7 +27,8 @@ public class GuildMusicManager implements Disposable {
   private VoiceChannel voiceChannel;
   private VoiceConnection voiceConnection;
 
-  public GuildMusicManager(final AudioPlayer player, final TextChannel textChannel, final MusicDashboardService dashboardService) {
+  public GuildMusicManager(final AudioPlayer player, final TextChannel textChannel,
+    final MusicDashboardService dashboardService) {
     this.player = player;
     this.scheduler = new TrackScheduler(this);
     this.player.addListener(this.scheduler);

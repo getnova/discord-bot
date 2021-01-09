@@ -1,5 +1,6 @@
 package net.getnova.module.discord.config;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
@@ -11,8 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.getnova.framework.jpa.model.TableModel;
-
-import java.io.Serializable;
 
 @Getter
 @Setter

@@ -7,6 +7,11 @@ import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +19,6 @@ import net.getnova.module.discord.music.GuildMusicManager;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class MusicDashboard implements Disposable {
@@ -60,14 +59,16 @@ public class MusicDashboard implements Disposable {
       .map(MessageCreateEvent::getMessage)
       .filter(message -> message.getChannelId().equals(this.channel.getId())
         && (message.getEmbeds().size() == 0
-        || message.getEmbeds().get(0).getTitle().stream().noneMatch(s -> s.startsWith("Music :small_orange_diamond: "))))
+        || message.getEmbeds().get(0).getTitle().stream()
+        .noneMatch(s -> s.startsWith("Music :small_orange_diamond: "))))
       .flatMap(message -> message.delete().delaySubscription(Duration.ofSeconds(10)))
       .subscribe();
   }
 
   private Mono<Void> clean() {
-    if (this.channel == null || this.message == null)
+    if (this.channel == null || this.message == null) {
       return Mono.empty();
+    }
 
     return this.channel.getMessagesBefore(this.message.getId())
       .transform(this.channel::bulkDeleteMessages)
@@ -84,7 +85,9 @@ public class MusicDashboard implements Disposable {
   }
 
   public Mono<?> updateDashboard() {
-    if (this.channel == null || this.message == null) return Mono.empty();
+    if (this.channel == null || this.message == null) {
+      return Mono.empty();
+    }
 
     return this.message.edit(spec -> spec.setEmbed(this.render()))
       .doOnError(cause -> {
@@ -113,7 +116,8 @@ public class MusicDashboard implements Disposable {
   private Consumer<? super EmbedCreateSpec> nothingPlaying() {
     return (Consumer<EmbedCreateSpec>) spec -> spec
       .setTitle("Music :small_orange_diamond: No music playback")
-      .setDescription("Here you can always see the state of the music that is currently being played. Use !play and !search.")
+      .setDescription(
+        "Here you can always see the state of the music that is currently being played. Use !play and !search.")
       .setColor(Color.of(0x00ED9728))
       .addField("No music playback", ":x: No music is currently being played.", false);
   }

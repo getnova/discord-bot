@@ -1,18 +1,17 @@
 package net.getnova.module.discord.command;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import lombok.extern.slf4j.Slf4j;
-import net.getnova.module.discord.Discord;
-import net.getnova.module.discord.DiscordConfig;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import net.getnova.module.discord.Discord;
+import net.getnova.module.discord.DiscordConfig;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -24,8 +23,8 @@ public class CommandService {
   private final int prefixLength;
 
   public CommandService(final Discord discord,
-                        final Collection<Command> commands,
-                        final DiscordConfig config) {
+    final Collection<Command> commands,
+    final DiscordConfig config) {
 
     this.discord = discord;
     this.commands = commands.stream().collect(Collectors.toMap(Command::getId, Function.identity()));
@@ -41,7 +40,8 @@ public class CommandService {
 
   private void messageCreated(final MessageCreateEvent event) {
     final String rawContent = event.getMessage().getContent().substring(this.prefixLength);
-    final String[] content = Arrays.stream(rawContent.split("[ \t\n\r\f]")).filter(entry -> !entry.isBlank()).toArray(String[]::new);
+    final String[] content = Arrays.stream(rawContent.split("[ \t\n\r\f]")).filter(entry -> !entry.isBlank())
+      .toArray(String[]::new);
 
     if (content.length == 0) {
       return;
@@ -53,7 +53,8 @@ public class CommandService {
       event.getMessage()
         .getChannel()
         .flatMap(channel -> channel.createMessage(String.format("Command `%s` was not found.", content[0])))
-        .flatMap(message -> Mono.zip(event.getMessage().delete(), message.delete()).delaySubscription(Duration.ofSeconds(10)))
+        .flatMap(
+          message -> Mono.zip(event.getMessage().delete(), message.delete()).delaySubscription(Duration.ofSeconds(10)))
         .doOnError(cause -> {
           if (cause.getMessage() == null || !cause.getMessage().contains("Unknown Message")) {
             log.error("Unable to delete message.", cause);

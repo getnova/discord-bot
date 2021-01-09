@@ -32,7 +32,9 @@ public class SearchCommand extends MusicCommand {
       final GuildMusicManager musicManager = tuple.getT2();
 
       final Mono<Message> messageMono = this.checkChannel(tuple.getT1(), musicManager, tuple.getT3());
-      if (messageMono != null) return messageMono;
+      if (messageMono != null) {
+        return messageMono;
+      }
 
       musicManager.setVoiceChannel(tuple.getT3());
       this.playerManager.loadItem("ytsearch:" + query, new ResultHandler(musicManager, query, tuple.getT1()));
