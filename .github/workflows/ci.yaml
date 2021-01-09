@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  schedule:
-    - cron: '0 0 * * *' # everyday at 00:00 UTC
   push:
     branches: [ main ]
     tags: [ 'v*' ]
@@ -65,33 +63,6 @@ jobs:
       - name: Run tests with Gradle
         run: ./gradlew test --no-daemon
 
-  codeql:
-    needs: [ lint, test ]
-    runs-on: ubuntu-latest
-    if: 'false' # Since Java 15 is not yet supported, it is disabled.
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up JDK 15
-        uses: actions/setup-java@v1
-        with:
-          java-version: 15
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-          languages: java
-
-      - name: Build with Gradle
-        run: ./gradlew assable --no-daemon -Dorg.gradle.caching=false # DON'T CACHE GRADLE STUFF WITH CodeQL!
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
-
   build:
     needs: [ lint, test ]
     runs-on: ubuntu-latest
@@ -127,7 +98,6 @@ jobs:
   docker:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
 
     steps:
       - uses: actions/checkout@v2
@@ -179,7 +149,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile.github-actions
           platforms: ${{ env.DOCKER_PLATFORMS }}
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -191,6 +161,7 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Check manifest
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }}
           docker buildx imagetools inspect ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }}
