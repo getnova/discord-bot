@@ -28,7 +28,9 @@ public class TrackScheduler extends AudioEventAdapter {
   }
 
   public void queue(final AudioTrack track) {
-    this.queue.offer(track);
+    if (!this.queue.offer(track)) {
+      throw new IllegalStateException(String.format("Can't add track: %s (Already %s items)", track.getInfo().uri, this.queue.size()));
+    }
     this.checkConnection()
       .subscribe(connection -> {
         if (!this.isPlaying()) {
