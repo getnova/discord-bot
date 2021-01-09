@@ -35,7 +35,22 @@ jobs:
         run: chmod +x gradlew
 
       - name: Lint with Gradle
-        run: ./gradlew checkstyleMain checkstyleTest --no-daemon
+        run: ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest pmdMain pmdTest --stacktrace --no-daemon
+
+      - name: Annotate Checkstyle Issues
+        uses: jwgmeligmeyling/checkstyle-github-action@master
+        with:
+          path: '**/build/reports/checkstyle/*.xml'
+
+      - name: Annotate SpotBugs Issues
+        uses: jwgmeligmeyling/spotbugs-github-action@master
+        with:
+          path: '**/build/reports/spotbugs/*.xml'
+
+      - name: Annotate PMD Issues
+        uses: jwgmeligmeyling/pmd-github-action@master
+        with:
+          path: '**/build/reports/pmd/*.xml'
 
   test:
     runs-on: ubuntu-latest
