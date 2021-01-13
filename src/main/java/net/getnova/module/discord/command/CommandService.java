@@ -40,7 +40,7 @@ public class CommandService {
 
   private void messageCreated(final MessageCreateEvent event) {
     final String rawContent = event.getMessage().getContent().substring(this.prefixLength);
-    final String[] content = Arrays.stream(rawContent.split("[ \t\n\r\f]")).filter(entry -> !entry.isBlank())
+    final String[] content = Arrays.stream(rawContent.split("[ \t\n\r\f]")).filter(entry -> !entry.isEmpty())
       .toArray(String[]::new);
 
     if (content.length == 0) {
@@ -68,7 +68,8 @@ public class CommandService {
 
     try {
       command.execute(arguments, event).block();
-    } catch (Throwable cause) {
+    }
+    catch (Throwable cause) {
       log.error("Unable to execute command \"{}\" with arguments \"{}\". ", content[0], String.join(" ", arguments),
         cause instanceof RuntimeException && cause.getCause() != null ? cause.getCause() : cause);
       event.getMessage()
