@@ -37,5 +37,5 @@ dependencies {
   implementation('net.getnova.framework:nova-data-jpa:edge') { changing(true) }
 
   /* Other (Runtime Optimisation) */
-  annotationProcessor('org.springframework:spring-context-indexer:5.3.4')
+  annotationProcessor('org.springframework:spring-context-indexer:5.3.8')
 }
